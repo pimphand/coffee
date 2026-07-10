@@ -1,0 +1,251 @@
+---
+// Reservation Modal — mounted once globally in Layout.astro so any
+// `<button data-bs-toggle="modal" data-bs-target="#reservationModal">`
+// trigger on any page can open it. Uses Bootstrap 5's native modal API
+// (already loaded globally from Layout.astro) — no custom JS wiring for
+// open/close, focus trap, escape, or backdrop click.
+//
+// Submission is purely client-side (no backend): the inline script
+// intercepts form submit, generates a BH-##### reference, and swaps
+// the form for a success panel. Reset fires on `hidden.bs.modal` so
+// the modal is ready for the next open.
+---
+
+<style is:global>
+  /* Modal theming — match Brew Haven's dark/elegant aesthetic.
+     Bootstrap provides the modal shell; we override colors, radii,
+     inputs, and the close button so it visually fits the rest of
+     the site. */
+  .reservation-modal .modal-content {
+    background-color: #161616;
+    color: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+  .reservation-modal .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 22px 26px 16px;
+  }
+  .reservation-modal .modal-title {
+    color: #fff;
+    font-family: 'Marcellus', serif;
+    font-size: 24px;
+    letter-spacing: 0.3px;
+  }
+  .reservation-modal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.85;
+  }
+  .reservation-modal .btn-close:hover { opacity: 1; }
+  .reservation-modal .modal-body {
+    padding: 22px 26px 26px;
+  }
+  .reservation-modal label {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    margin-bottom: 6px;
+    display: block;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .reservation-modal .form-control,
+  .reservation-modal .form-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 11px 14px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 15px;
+    line-height: 1.4;
+    height: 48px;                /* fixed rendered height — not a floor — so all
+                                    text / email / tel / date / select controls
+                                    in the modal are byte-identical in box size. */
+    box-sizing: border-box;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  /* Date input — strip user-agent styles so type="date" lands in the
+     exact same box as Time + Persons <select>s. Chrome/Firefox/Safari
+     each apply slightly different native padding, line-height, and a
+     colored calendar-picker icon to date inputs; the rules below
+     reset those quirks and tint the picker icon to fit the dark theme. */
+  .reservation-modal input[type="date"].form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  .reservation-modal input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.7);
+    opacity: 0.75;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+  .reservation-modal input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+  .reservation-modal .form-control::placeholder { color: rgba(255, 255, 255, 0.4); }
+  .reservation-modal .form-control:focus,
+  .reservation-modal .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: #c8a97e;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(200, 169, 126, 0.18);
+  }
+  .reservation-modal .form-select option {
+    background-color: #161616;
+    color: #fff;
+  }
+
+  /* Reservation success view */
+  .reservation-success .success-icon {
+    font-size: 68px;
+    color: #4caf50;
+    margin-bottom: 18px;
+  }
+  .reservation-success .booking-ref {
+    font-family: 'Marcellus', serif;
+    font-size: 30px;
+    color: #c8a97e;
+    margin: 8px 0 16px;
+    letter-spacing: 1px;
+  }
+  .reservation-modal .theme-btn { border: none; }
+  .reservation-modal .theme-btn:focus { outline: none; box-shadow: none; }
+
+  /* When switch from form to success swap */
+  .reservation-modal #reservationForm,
+  .reservation-modal #reservationSuccess { animation: rsFade 0.25s ease-out; }
+  @keyframes rsFade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<!--=== Reservation Modal (Bootstrap 5) ===-->
+<div
+  class="modal fade reservation-modal"
+  id="reservationModal"
+  tabindex="-1"
+  aria-hidden="true"
+  aria-labelledby="reservationModalLabel"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reservationModalLabel">Reserve Your Table</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form view -->
+        <form id="reservationForm" novalidate>
+          <p class="lead-subtle" style="color: rgba(255,255,255,0.65); font-size: 14px; margin-bottom: 18px;">
+            Book your seat at Brew Haven. We'll confirm shortly via email.
+          </p>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="resName">Full Name</label>
+              <input type="text" class="form-control" id="resName" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="col-md-6">
+              <label for="resEmail">Email</label>
+              <input type="email" class="form-control" id="resEmail" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="col-md-4">
+              <label for="resDate">Date</label>
+              <input type="date" class="form-control" id="resDate" name="date" required>
+            </div>
+            <div class="col-md-4">
+              <label for="resTime">Time</label>
+              <select class="form-select" id="resTime" name="time" required>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="06:00 PM">06:00 PM</option>
+                <option value="08:00 PM">08:00 PM</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="resPersons">Persons</label>
+              <select class="form-select" id="resPersons" name="persons" required>
+                <option value="1 Person">1 Person</option>
+                <option value="2 Persons" selected>2 Persons</option>
+                <option value="3 Persons">3 Persons</option>
+                <option value="4 Persons">4 Persons</option>
+                <option value="5 Persons">5 Persons</option>
+                <option value="6 Persons">6 Persons</option>
+                <option value="7 Persons">7 Persons</option>
+                <option value="8 Persons">8 Persons</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="resPhone">Phone</label>
+              <input type="tel" class="form-control" id="resPhone" name="phone" placeholder="Optional">
+            </div>
+            <div class="col-md-6">
+              <label for="resRequest">Special Request</label>
+              <input type="text" class="form-control" id="resRequest" name="request" placeholder="Optional — allergies, occasion, etc.">
+            </div>
+            <div class="col-12 mt-3">
+              <button type="submit" class="theme-btn style-one w-100">Confirm Reservation</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Success view (hidden until form submitted) -->
+        <div id="reservationSuccess" class="reservation-success d-none text-center py-4">
+          <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+          <h3 class="modal-title mb-2" style="font-size: 26px;">Reservation Confirmed</h3>
+          <p style="color: rgba(255,255,255,0.7); margin-bottom: 4px;">Your table is booked. We've sent the details to your email.</p>
+          <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 12px;">Booking reference</p>
+          <div class="booking-ref" id="bookingRef"></div>
+          <button type="button" class="theme-btn style-two border-0 mt-2" data-bs-dismiss="modal">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  /**
+   * Reservation Modal — client-side wiring.
+   *  - min date = today (prevents past bookings)
+   *  - submit intercepts → swap form for success panel with mock reference
+   *  - hidden.bs.modal resets state for next open
+   *  - works without jQuery (vanilla JS only)
+   */
+  (function () {
+    var form    = document.getElementById('reservationForm');
+    var success = document.getElementById('reservationSuccess');
+    var refEl   = document.getElementById('bookingRef');
+    var dateEl  = document.getElementById('resDate');
+    var modal   = document.getElementById('reservationModal');
+    if (!form || !success || !refEl || !dateEl || !modal) return;
+
+    // Min date = today (local timezone, ISO yyyy-mm-dd)
+    (function setMinDate() {
+      var t = new Date();
+      var y = t.getFullYear();
+      var m = String(t.getMonth() + 1).padStart(2, '0');
+      var d = String(t.getDate()).padStart(2, '0');
+      dateEl.min = y + '-' + m + '-' + d;
+    })();
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var ref = 'BH-' + Math.floor(10000 + Math.random() * 90000);
+      refEl.textContent = ref;
+      form.classList.add('d-none');
+      success.classList.remove('d-none');
+    });
+
+    // Reset form view when modal closes so it's ready for the next open
+    modal.addEventListener('hidden.bs.modal', function () {
+      form.reset();
+      form.classList.remove('d-none');
+      success.classList.add('d-none');
+    });
+  })();
+</script>

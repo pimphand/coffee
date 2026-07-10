@@ -1,0 +1,36 @@
+---
+// Team section showing 4 team members with hover-rounded images.
+const team = [
+  { img: '/assets/images/home-coffee/team/team-img1.jpg?v=2', name: 'Alex Johnson',    role: 'Main Chef' },
+  { img: '/assets/images/home-coffee/team/team-img2.jpg?v=2', name: 'Jessica Morgan',  role: 'Main Chef' },
+  { img: '/assets/images/home-coffee/team/team-img3.jpg?v=2', name: 'Mark Thompson',   role: 'Main Chef' },
+  { img: '/assets/images/home-coffee/team/team-img4.jpg?v=2', name: 'Anna Wilson',     role: 'Main Chef' }
+];
+---
+<section class="cs-team-sec py-5" id="team">
+  <div class="container">
+    <div class="row py-5">
+      <div class="col-lg-12">
+        <!-- Section Title -->
+        <div class="section-title text-center mt-2">
+          <h2 class="text-anm">Our Awesome Team</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row pb-4 mb-3">
+      {team.map((member, idx) => (
+        <div class="col-xl-3 col-md-6 col-sm-12">
+          <div class="cs-team-item text-center mb-4" data-aos="fade-up" data-aos-duration={1000 + idx * 300}>
+            <div class="member-image">
+              <img src={member.img} alt={`${member.name} portrait`}>
+            </div>
+            <div class="member-info">
+              <h4>{member.name}</h4>
+              <span class="position">{member.role}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

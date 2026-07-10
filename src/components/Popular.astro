@@ -1,0 +1,101 @@
+---
+// Popular Items section: 3-column layout with items to left and right of a central cup image.
+const leftItems = [
+  {
+    icon: 'flaticon-cezve',
+    title: 'Turkish Coffee',
+    desc: 'Strong, rich, and unfiltered coffee brewed in a cezve, with a bold, aromatic flavor.'
+  },
+  {
+    icon: 'flaticon-coffee',
+    title: 'Coffee To Go',
+    desc: 'Convenient, portable coffee served in a cup perfect for busy, on-the-move lifestyles.'
+  },
+  {
+    icon: 'flaticon-kettle',
+    title: 'Morning Coffee',
+    desc: 'Energizing coffee enjoyed in the morning, warmth, aroma, and rich flavor.'
+  },
+  {
+    icon: 'flaticon-espresso',
+    title: 'Espresso',
+    desc: 'Strong, concentrated coffee shot brewed delivering bold flavor and rich crema.'
+  }
+];
+
+const rightItems = [
+  {
+    icon: 'flaticon-croissant',
+    title: 'Croissant',
+    desc: 'Flaky, buttery French pastry with delicate layers, perfect for breakfast.'
+  },
+  {
+    icon: 'flaticon-french-toast',
+    title: 'French Toast',
+    desc: 'Golden bread slices soaked in egg mixture, pan-fried and topped with sweet delights.'
+  },
+  {
+    icon: 'flaticon-cupcake',
+    title: 'Pancakes',
+    desc: 'Fluffy, round breakfast cakes served with syrup, fruits, or butter for a sweet start.'
+  },
+  {
+    icon: 'flaticon-chocolate-bar',
+    title: 'Chocolate',
+    desc: 'Sweet, rich treat made from cocoa, enjoyed as bars, drinks, or desserts.'
+  }
+];
+---
+<section class="popular-section pt-5 pb-3 mt-3" id="popular">
+  <div class="container">
+    <div class="row justify-content-center pt-5">
+      <div class="col-xl-6 col-lg-8">
+        <!-- Section Title -->
+        <div class="section-title text-center mb-xl-0 mb-5">
+          <h2 class="mb-3 text-anm">Popular Item</h2>
+          <p class="px-5" data-aos="fade-up" data-aos-duration="1000">A highly favored item loved by customers for its great taste, quality, and frequent repeat orders.</p>
+        </div>
+      </div>
+    </div>
+    <div class="row align-items-center">
+      <div class="col-xl-4 col-md-6">
+        <!-- Bistly Popular Item (Left list) -->
+        <div class="popular-item-list item-list-left" data-aos="fade-right" data-aos-duration="1000">
+          {leftItems.map((item, idx) => (
+            <div class="bistly-popular-item mb-5" data-aos="fade-right" data-aos-duration={1000 + idx * 300}>
+              <div class="icon">
+                <i class={item.icon}></i>
+              </div>
+              <div class="content">
+                <h4>{item.title}</h4>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="col-xl-4 d-none d-xl-block">
+        <!-- Bistly Item -->
+        <div class="bistly-image text-center mb-5" data-aos="fade-up" data-aos-duration="1000">
+          <img src="/assets/images/home-coffee/gallery/cup.png" alt="Coffee Cup">
+        </div>
+      </div>
+      <div class="col-xl-4 col-md-6">
+        <!-- Popular Item List (Right) -->
+        <div class="popular-item-list item-list-right" data-aos="fade-left" data-aos-duration="1000">
+          {rightItems.map((item, idx) => (
+            <div class="bistly-popular-item mb-5" data-aos="fade-left" data-aos-duration={1000 + idx * 300}>
+              <div class="icon">
+                <i class={item.icon}></i>
+              </div>
+              <div class="content">
+                <h4>{item.title}</h4>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

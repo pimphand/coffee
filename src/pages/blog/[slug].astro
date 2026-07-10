@@ -1,0 +1,205 @@
+---
+import Layout     from '../../layouts/Layout.astro';
+import Preloader  from '../../components/Preloader.astro';
+import Header     from '../../components/Header.astro';
+import Footer     from '../../components/Footer.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { posts, type BlogPost } from '../../data/posts';
+
+export function getStaticPaths() {
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props:  { post }
+  }));
+}
+
+interface Props { post: BlogPost }
+const { post } = Astro.props;
+
+// Iconic-box checklist mid-content (matches blog-details.html)
+const checklist = [
+  { icon: 'flaticon-vegetable-1',  title: 'Fresh & Hygienic Meals' },
+  { icon: 'flaticon-package',      title: 'Temperature-Controlled Packaging' },
+  { icon: 'flaticon-waiter',       title: 'Perfectly Portioned Servings' },
+  { icon: 'flaticon-24-hours-support', title: 'Reliable Delivery & Support' }
+];
+
+// Original template groups cooking methods 2-per-<ul> across 3 columns.
+const cookingMethodPairs = [
+  ['Steaming', 'Grilling'],
+  ['Roasting', 'Boiling'],
+  ['Braising', 'Sous-Vide']
+];
+---
+<Layout title={`${post.title} - Brew Haven`} description={post.excerpt} pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner
+          title={post.title}
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Blog Grid', href: '/blog' }, { label: 'Blog Details' }]}
+        />
+
+        <section class="bistly-blog-details py-5">
+          <div class="container">
+            <div class="blog-details-wrapper py-5">
+              <div class="row py-xl-4">
+                <div class="col-lg-12">
+                  <div class="blog-post-main pb-5">
+                    <div class="blog-post">
+                      <div class="content">
+                        <div class="post-meta mb-4" data-aos="fade-down" data-aos-duration="600">
+                          <span><i class="far fa-user"></i>By {post.author}</span>
+                          <span><i class="far fa-calendar-alt"></i>{post.date}</span>
+                        </div>
+                        <h4 class="title text-anm">{post.title}</h4>
+                        <div class="author-meta" data-aos="fade-up" data-aos-duration="700">
+                          <img src="/assets/images/home-coffee/team/team-img1.jpg" alt="author">
+                          <span>Posted By <a href="#">Devid Liam</a></span>
+                        </div>
+                        <figure data-aos="fade-up" data-aos-duration="900">
+                          <img src={post.image} alt={post.title}>
+                        </figure>
+                        {post.body.map((para) => (
+                          <p data-aos="fade-up" data-aos-duration="1000">{para}</p>
+                        ))}
+
+                        <!-- Content row: iconic-boxes + image -->
+                        <div class="row align-items-center justify-content-center">
+                          <div class="col-lg-8">
+                            <div class="content-box">
+                              <h4>Why Choose Food Cot? Discover the Benefits</h4>
+                              <p>Food Cot offers a convenient, hygienic, and cost-effective dining solution. Enjoy freshly prepared meals, perfectly portioned and easy to serve—ideal for events, offices, or everyday family dining.</p>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  {checklist.slice(0, 2).map((item, idx) => (
+                                    <div class="bistly-iconic-box-two mb-4" data-aos="fade-up" data-aos-duration={1200 + idx * 200}>
+                                      <div class="icon"><i class={item.icon}></i></div>
+                                      <div class="content"><h5>{item.title}</h5></div>
+                                    </div>
+                                  ))}
+                                </div>
+                                <div class="col-md-6">
+                                  {checklist.slice(2).map((item, idx) => (
+                                    <div class="bistly-iconic-box-two mb-4" data-aos="fade-up" data-aos-duration={1600 + idx * 200}>
+                                      <div class="icon"><i class={item.icon}></i></div>
+                                      <div class="content"><h5>{item.title}</h5></div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-lg-4 col-md-8">
+                            <div class="bistly-image mb-4 text-center" data-aos="fade-up" data-aos-duration="2000">
+                              <img src="/assets/images/home-coffee/gallery/enjoy-img2.png" alt="Blog Image">
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Cooking methods row -->
+                        <div class="row align-items-center">
+                          <div class="col-lg-4 order-lg-1 order-2">
+                          <div class="bistly-image mb-5 text-center" data-aos="fade-up" data-aos-duration="2200">
+                            <img src="/assets/images/home-coffee/about/about-img1.jpg" alt="Blog Image">
+                            </div>
+                          </div>
+                          <div class="col-lg-8 order-lg-2 order-1">
+                            <div class="bistly-content-box mb-5" data-aos="fade-up" data-aos-duration="2400">
+                              <h4>Our core commercial cooking methods Systems</h4>
+                              <p>Our core commercial cooking methods—steam, convection, and combination—ensure precise temperature control, consistent results, and enhanced food quality, making them ideal for efficient, high-volume kitchen.</p>
+                              <div class="row">
+                                <div class="col-xl-6">
+                                  <div class="row">
+                                    {cookingMethodPairs.map((pair) => (
+                                      <div class="col-md-4 col-6">
+                                        <ul class="check-list style-one mb-4">
+                                          {pair.map((method) => (
+                                            <li><i class="fas fa-badge-check"></i>{method}</li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Blockquote -->
+                        <blockquote class="mb-5 mt-2" data-aos="fade-up" data-aos-duration="2600">
+                          <div class="icon"><i class="flaticon-comma"></i></div>
+                          <div class="content">
+                            <h3>Italian Redefined offers a delightful culinary experience Each dish blends traditional Italian flavors with contemporary flair. Fresh ingredients</h3>
+                            <h5>John Smith / Main Chef</h5>
+                          </div>
+                        </blockquote>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Comments area -->
+                  <div class="comments-area mb-5" data-aos="fade-up" data-aos-duration="2800">
+                    <h3 class="comments-title">Blog Comments (1)</h3>
+                    <ul class="comments-list">
+                      <li>
+                        <div class="comment">
+                          <div class="comment-avatar">
+                            <img src="/assets/images/home-coffee/team/team-img2.jpg" alt="comment author">
+                          </div>
+                          <div class="comment-content">
+                            <span class="author-name">John Smith<span class="date">Jun 02, 2025</span></span>
+                            <p>Your blog posts always make me hungry! I appreciate the behind-the-scenes stories and chef insights. It's great to see the care and creativity that goes into each dish.</p>
+                            <a href="#" class="reply">Reply</a>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Reply form -->
+                  <div class="comments-form" data-aos="fade-up" data-aos-duration="3000">
+                    <h3>Leave A Reply</h3>
+                    <form action="#" class="contact-form" autocomplete="off">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form_control" placeholder="Enter full name" name="name" required>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form_control" placeholder="Enter email" name="email" required>
+                          </div>
+                        </div>
+                        <div class="col-lg-12">
+                          <div class="form-group">
+                            <label>Comment</label>
+                            <textarea class="form_control" placeholder="Message" name="message" rows="5" cols="8"></textarea>
+                          </div>
+                        </div>
+                        <div class="col-lg-12">
+                          <div class="form-group text-center mt-2">
+                            <button class="theme-btn style-one" type="submit">Send Comments</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

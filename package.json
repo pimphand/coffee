@@ -1,0 +1,17 @@
+{
+  "name": "bistly-coffee",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Brew Haven coffee theme converted from Bistly HTML template to Astro",
+  "scripts": {
+    "dev": "astro dev --host",
+    "start": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.18"
+  }
+}

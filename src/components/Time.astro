@@ -1,0 +1,45 @@
+---
+// Opening time + Map section with reservation CTA.
+const openingHours = [
+  { day: 'Monday',    hours: '10:00AM - 07:00PM' },
+  { day: 'Tuesday',   hours: '10:00AM - 06:00PM' },
+  { day: 'Wednesday', hours: '10:00AM - 06:30PM' },
+  { day: 'Thursday',  hours: '10:00AM - 07:00PM' },
+  { day: 'Friday',    hours: '10:00AM - 06:00PM' },
+  { day: 'Saturday',  hours: '10:00AM - 06:30PM' },
+  { day: 'Sunday',    hours: 'Closed',           close: true }
+];
+---
+<section class="cs-time-sec py-5" id="contact">
+  <div class="container">
+    <div class="row py-5 justify-content-center">
+      <div class="col-xl-6 col-lg-8 col-md-10">
+        <div class="bistly-content-box text-white mt-4 mb-4 text-center text-xl-start">
+          <div class="section-title mb-4" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-anm">Join Us During These Opening Time</h2>
+          </div>
+          <p class="mb-4" data-aos="fade-up" data-aos-duration="1200">Join us during our opening hours for a memorable dining experience filled with delicious food, warm ambiance, and friendly service.</p>
+          <div class="bistly-button" data-aos="fade-up" data-aos-duration="1400">
+            <a href="/contact" class="theme-btn style-two">Contact Us</a>
+          </div>
+        </div>
+        <!--=== Map Box ===-->
+        <div class="map-box mb-5" data-aos="fade-up" data-aos-duration="1600">
+          <iframe src="https://maps.google.com/maps?q=new%20york&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed"></iframe>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-8 col-md-10">
+        <div class="opening-time-box mt-4 mb-4" data-aos="fade-up" data-aos-duration="1900">
+          <h3>Opening Time</h3>
+          <ul>
+            {openingHours.map((row) => (
+              <li>
+                {row.day} <span class={row.close ? 'close' : ''}>{row.hours}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,90 @@
+---
+import ReservationModal from '../components/ReservationModal.astro';
+
+// Bistly Layout - supports both the coffee home page and inner pages
+// via a `pageStyle` prop. Inner pages swap home-coffee.css for
+// innerpages.css and additionally load innerpage.js (slick sliders).
+
+interface Props {
+  title?: string;
+  description?: string;
+  /**
+   * 'home'  → uses home-coffee.css (coffee-themed landing)
+   * 'inner' → uses innerpages.css + innerpage.js (about / blog / etc.)
+   */
+  pageStyle?: 'home' | 'inner';
+}
+
+const {
+  title = 'Brew Haven - Restaurant & Cafe',
+  description = 'Foods, Restaurant, Coffee',
+  pageStyle = 'home'
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content={description}>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{title}</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/favicon.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <!-- Flaticon + FontAwesome -->
+  <link rel="stylesheet" href="/assets/fonts/flaticon/flaticon_bistly.css">
+  <link rel="stylesheet" href="/assets/fonts/fontawesome/css/all.min.css">
+
+  <!-- Plugin CSS -->
+  <link rel="stylesheet" href="/assets/css/plugins/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/css/plugins/slick.css">
+  <link rel="stylesheet" href="/assets/css/plugins/magnific-popup.css">
+  <link rel="stylesheet" href="/assets/css/plugins/nice-select.css">
+  <link rel="stylesheet" href="/assets/css/plugins/aos.css">
+
+  <!-- Common + page-level CSS (switches by pageStyle) -->
+  <link rel="stylesheet" href="/assets/css/common-style.css">
+  {pageStyle === 'home' ? (
+    <link rel="stylesheet" href="/assets/css/pages/home-coffee.css">
+  ) : (
+    <link rel="stylesheet" href="/assets/css/pages/innerpages.css">
+  )}
+</head>
+<body class="restaurant-website">
+  <slot />
+  <ReservationModal />
+
+  <!-- jQuery (must load first) -->
+  <script is:inline src="/assets/js/plugins/jquery-3.7.1.min.js"></script>
+
+  <!-- Bootstrap (popper) -->
+  <script is:inline src="/assets/js/plugins/popper.min.js"></script>
+  <script is:inline src="/assets/js/plugins/bootstrap.min.js"></script>
+
+  <!-- GSAP + plugins -->
+  <script is:inline src="/assets/js/plugins/gsap/gsap.min.js"></script>
+  <script is:inline src="/assets/js/plugins/gsap/SplitText.min.js"></script>
+  <script is:inline src="/assets/js/plugins/gsap/ScrollSmoother.min.js"></script>
+  <script is:inline src="/assets/js/plugins/gsap/ScrollTrigger.min.js"></script>
+
+  <!-- Other plugins -->
+  <script is:inline src="/assets/js/plugins/jquery.waypoints.js"></script>
+  <script is:inline src="/assets/js/plugins/jquery.counterup.min.js"></script>
+  <script is:inline src="/assets/js/plugins/slick.min.js"></script>
+  <script is:inline src="/assets/js/plugins/jquery.magnific-popup.min.js"></script>
+  <script is:inline src="/assets/js/plugins/jquery.nice-select.min.js"></script>
+  <script is:inline src="/assets/js/plugins/aos.js"></script>
+
+  <!-- Main script -->
+  <script is:inline src="/assets/js/common.js"></script>
+
+  <!-- Innerpage slider initialisation (gallery / testimonial / instagram / product) -->
+  {pageStyle === 'inner' && <script is:inline src="/assets/js/innerpage.js"></script>}
+</body>
+</html>

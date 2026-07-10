@@ -1,0 +1,85 @@
+---
+// Single reusable site header. No variant prop.
+// All pages (home / about / blog / etc.) render the same markup so the
+// brand is visually consistent across the site.
+// - Desktop brand logo  → white-on-dark circular logo (coffee theme).
+// - Mobile off-canvas   → dark logo so it stays readable on the white
+//                         mobile-menu background.
+const headerClass = 'header-area header-two transparent-header';
+const logoWhite   = '/assets/images/home-coffee/logo/logo-white.png';
+const logoMobile  = '/assets/images/home-coffee/logo/logo-main.png';
+---
+<style is:global>
+  /* Force brand logo to a 60×60 circle on every page, regardless of
+     which page-specific CSS file is loaded (home-coffee.css vs
+     innerpages.css). Single source of truth. */
+  .site-branding .brand-logo img {
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+</style>
+
+<header class={headerClass}>
+  <div class="container">
+    <div class="header-navigation">
+      <div class="nav-inner-menu">
+        <div class="primary-menu">
+          <!-- Site Branding -->
+          <div class="site-branding">
+            <a href="/" class="brand-logo"><img src={logoWhite} alt="Brew Haven Logo"></a>
+          </div>
+          <!-- Theme Main Menu -->
+          <div class="theme-nav-menu">
+            <!-- Mobile Menu Top -->
+            <div class="theme-menu-top d-flex justify-content-between d-block d-lg-none mb-4">
+              <div class="site-branding">
+                <a href="/" class="brand-logo"><img src={logoMobile} alt="Brew Haven Logo"></a>
+              </div>
+              <div class="navbar-close">
+                <i class="far fa-times"></i>
+              </div>
+            </div>
+            <!-- Main Menu -->
+            <nav class="main-menu">
+              <ul>
+                <li class="menu-item"><a href="/">Home</a></li>
+                <li class="menu-item"><a href="/about">About Us</a></li>
+                <li class="menu-item"><a href="/menu">Menu</a></li>
+                <li class="menu-item"><a href="/team">Our Team</a></li>
+                <li class="menu-item"><a href="/blog">Blog</a></li>
+                <li class="menu-item"><a href="/contact">Contact</a></li>
+              </ul>
+            </nav>
+            <!-- Theme Nav Button (mobile CTA) -->
+            <div class="theme-nav-button mt-3 d-block d-md-none">
+              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">Reservation</button>
+            </div>
+            <!-- Theme Menu Bottom (mobile social) -->
+            <div class="theme-menu-bottom mt-5 d-block d-lg-none">
+              <h5>Follow Us</h5>
+              <ul class="social-link">
+                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- Header Nav Right -->
+          <div class="nav-right-item">
+            <div class="nav-button d-none d-md-block">
+              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">Reservation</button>
+            </div>
+            <div class="navbar-toggler">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

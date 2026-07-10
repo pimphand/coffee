@@ -1,0 +1,194 @@
+---
+import Layout      from '../layouts/Layout.astro';
+import Preloader   from '../components/Preloader.astro';
+import Header      from '../components/Header.astro';
+import Footer      from '../components/Footer.astro';
+import PageBanner  from '../components/PageBanner.astro';
+
+// Time slot options for the reservation form. Original template had
+// "USA / UAE / France / UK" under the "Time" label which was clearly a
+// template-data mistake — fix to actual reservation-time slots.
+const timeSlots = [
+  '10:00 AM',
+  '11:00 AM',
+  '12:00 PM',
+  '02:00 PM',
+  '06:00 PM',
+  '08:00 PM'
+];
+
+// Person count options for the reservation form.
+const personOptions = [1, 2, 3, 4, 5, 6];
+---
+<Layout title="Contact Us - Brew Haven" description="Reach Brew Haven — reservations, hours, and contact details" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner
+          title="Contact Us"
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Contact Us' }]}
+        />
+
+        <!-- Contact Info Boxes (location, phone, email) -->
+        <section class="contact-info-sec py-5 mt-xl-4">
+          <div class="container">
+            <div class="row py-5">
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="contact-info-box text-center mb-4" data-aos="fade-up" data-aos-duration="800">
+                  <div class="icon"><i class="far fa-map-marker-alt"></i></div>
+                  <div class="content">
+                    <h3>Our Location</h3>
+                    <p>456 Elm Avenue, Metropolis NY 10001</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="contact-info-box text-center mb-4" data-aos="fade-up" data-aos-duration="1000">
+                  <div class="icon"><i class="far fa-phone-alt"></i></div>
+                  <div class="content">
+                    <h3>Contact Number</h3>
+                    <p><a href="tel:+0001234567890">+000 123 456 7890</a></p>
+                    <p><a href="tel:+0001234567890">+000 123 756 4352</a></p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="contact-info-box text-center mb-4" data-aos="fade-up" data-aos-duration="1200">
+                  <div class="icon"><i class="far fa-envelope"></i></div>
+                  <div class="content">
+                    <h3>Email Address</h3>
+                    <p><a href="mailto:contact@brewhaven.example">contact@brewhaven.example</a></p>
+                    <p><a href="mailto:info@brewhaven.example">info@brewhaven.example</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact Section: opening hours + reservation form -->
+        <section class="bistly-contact-sec pb-5">
+          <div class="container">
+            <div class="row pb-3 justify-content-center">
+              <div class="col-xl-6 col-lg-8">
+                <!-- Bistly Content Box -->
+                <div class="bistly-content-box pe-xl-5">
+                  <div class="section-title">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Contact Us</span>
+                    <h2 class="text-anm">Talk to Us Today</h2>
+                  </div>
+                  <p data-aos="fade-up" data-aos-duration="1200">
+                    Have a question, feedback, or need support? We're here to help! Reach out to our friendly team anytime — we're committed to providing prompt, professional assistance to ensure you get the information or service you need.
+                  </p>
+                  <div class="bistly-opening-time">
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="bistly-open-box mb-5" data-aos="fade-up" data-aos-duration="1200">
+                          <div class="content">
+                            <h4>Opening Hours</h4>
+                            <ul>
+                              <li><span class="days">Mon - Thu:</span><span class="time">10:00 am - 01:00 am</span></li>
+                              <li><span class="days">Fri - Sat:</span><span class="time">10:00 am - 01:00 am</span></li>
+                              <li><span class="days">Sunday:</span><span class="off-day">Off Day</span></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="bistly-open-box mb-5" data-aos="fade-up" data-aos-duration="1400">
+                          <div class="content">
+                            <h4>Meal Service</h4>
+                            <ul>
+                              <li><span class="days">Breakfast:</span><span class="time">07:00 am - 10:00 am</span></li>
+                              <li><span class="days">Lunch:</span><span class="time">12:00 pm - 02:00 pm</span></li>
+                              <li><span class="days">Dinner:</span><span class="time">07:00 pm - 10:00 pm</span></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-6 col-lg-8">
+                <!-- Contact Wrapper (dark form) -->
+                <div class="contact-wrapper mt-xl-0 mt-5" data-aos="fade-up" data-aos-duration="1400">
+                  <form>
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label>Full Name</label>
+                          <input type="text" class="form_control" placeholder="Enter full name" name="name" required>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label>Email</label>
+                          <input type="email" class="form_control" placeholder="Enter email" name="email" required>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label>Phone</label>
+                          <input type="tel" class="form_control" placeholder="Enter phone number" name="phone" required>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label>Person</label>
+                          <select class="wide">
+                            {personOptions.map((n) => (
+                              <option value={`0${n}`}>{n} {n === 1 ? 'Person' : 'Persons'}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label>Time</label>
+                          <select class="wide">
+                            {timeSlots.map((slot, idx) => (
+                              <option value={`0${idx + 1}`}>{slot}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label>Message</label>
+                          <textarea class="form_control" rows="4" cols="5" placeholder="Writing message..." name="message"></textarea>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <button class="theme-btn style-one" type="submit">Submit Request</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-sec">
+          <div class="map-box mt-5 pt-3" data-aos="fade-up" data-aos-duration="1200">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d96777.16150026117!2d-74.00840582560909!3d40.71171357405996!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1706508986625!5m2!1sen!2sbd"
+              loading="lazy"
+              title="Brew Haven location on Google Maps"
+            ></iframe>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

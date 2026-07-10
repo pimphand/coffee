@@ -1,0 +1,57 @@
+---
+// Latest 3 blog posts preview.
+const posts = [
+  {
+    img: '/assets/images/home-coffee/blog/blog-img1.jpg',
+    title: 'Local Beans, Global Dreams',
+    excerpt: 'Why sourcing our coffee from ethical farms around the world makes a difference every day.',
+    author: 'By John',
+    date: 'May 19, 2025'
+  },
+  {
+    img: '/assets/images/home-coffee/blog/blog-img2.jpg',
+    title: 'Your Daily Ritual, Elevated',
+    excerpt: 'How our cozy space and curated brews turn your coffee break into a daily ritual.',
+    author: 'By John',
+    date: 'May 19, 2025'
+  },
+  {
+    img: '/assets/images/home-coffee/blog/blog-img3.jpg',
+    title: 'The Art Behind Every Cup',
+    excerpt: "Discover how we craft each coffee with care, from bean selection to the final pour.",
+    author: 'By John',
+    date: 'May 19, 2025'
+  }
+];
+---
+<section class="cs-blog-sec py-5" id="blog">
+  <div class="container">
+    <div class="row py-5">
+      <div class="col-lg-12">
+        <!-- Section Title -->
+        <div class="section-title text-center pt-4 mb-4">
+          <h2 class="text-anm">Our Latest Blog Post</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center pb-5">
+      {posts.map((post, idx) => (
+        <div class="col-xl-4 col-md-6 col-sm-12">
+          <div class="bistly-blog-post mb-4" data-aos="fade-up" data-aos-duration={1000 + idx * 300}>
+            <div class="post-thumbnail">
+              <img src={post.img} alt={post.title}>
+            </div>
+            <div class="post-content">
+              <div class="post-meta">
+                <span><i class="far fa-user"></i>{post.author}</span>
+                <span><i class="far fa-calendar-alt"></i>{post.date}</span>
+              </div>
+              <h4><a href="#blog-details">{post.title}</a></h4>
+              <p>{post.excerpt} <a href="#blog-details">Read More</a></p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

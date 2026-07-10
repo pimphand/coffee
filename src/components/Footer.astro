@@ -1,0 +1,126 @@
+---
+// Single reusable site footer. No variant prop.
+// All pages show the same coffee-themed dark footer with one consistent
+// brand logo and the same decorative shape.
+const footerClass  = 'default-footer cs-footer pt-5 p-r z-1';
+const shapeTwoSrc  = '/assets/images/home-coffee/footer/shape2.png';
+const footerLogo   = '/assets/images/home-coffee/logo/logo-white.png';
+
+const footerHours = [
+  { label: 'Mon - Thu:', time: '10:00 am - 01:00 am' },
+  { label: 'Fri - Sat:', time: '10:00 am - 01:00 am' },
+  { label: 'Sunday:',   time: 'Off Day', off: true }
+];
+---
+<style is:global>
+  /* Footer brand logo — enforce a 60×60 circle on every page so the
+     logo isn't rendered at its natural ~200×200 size (which the
+     vendor's `.brand-logo img` rule never matched because Footer uses
+     `.footer-brand` instead of `.brand-logo`). */
+  .footer-brand img {
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  /* Footer responsive polish — reduce vertical padding, lower font
+     sizes, tighten widget spacing on phones / tablets so the stacked
+     widgets don't feel cramped. Vendor common-style handles some of
+     this already; this block layers tighter mobile tweaks. */
+  @media (max-width: 767.98px) {
+    .default-footer { padding-top: 35px !important; }
+    .footer-widget-area { padding-top: 30px !important; padding-bottom: 25px !important; }
+    .footer-widget { margin-bottom: 22px !important; padding-bottom: 10px !important; }
+    .footer-widget .widget-title { margin-bottom: 14px !important; padding-bottom: 8px !important; font-size: 18px !important; }
+    .footer-widget .widget-content ul li { font-size: 15px !important; }
+  }
+  @media (max-width: 575.98px) {
+    .footer-widget .widget-content p { font-size: 15px !important; line-height: 24px !important; }
+    .copyright-link a:not(:last-child) { margin-right: 12px !important; }
+    .copyright-text, .copyright-link { font-size: 14px; }
+  }
+</style>
+
+<footer class={footerClass} id="footer">
+  <!-- shape-one intentionally omitted — unified design uses only shape-two -->
+  <div class="shape shape-two"><img src={shapeTwoSrc} alt="shape"></div>
+  <div class="container">
+    <div class="footer-widget-area pt-5">
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="footer-widget footer-about-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="800">
+            <div class="widget-content">
+              <a href="/" class="footer-brand mb-4"><img src={footerLogo} alt="Brew Haven"></a>
+              <p class="mb-4">Bistly Restaurant offers flavorful dishes, cozy ambiance.</p>
+              <div class="social-box">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-2 col-md-6">
+          <div class="footer-widget footer-nav-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1000">
+            <h4 class="widget-title mb-3 pb-2">Useful Link</h4>
+            <div class="widget-content">
+              <ul>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/team">Our Team</a></li>
+                <li><a href="/menu">Our Menu</a></li>
+                <li><a href="/blog">Our Blog</a></li>
+                <li><a href="/contact">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="footer-widget footer-time-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1200">
+            <h4 class="widget-title mb-3 pb-2">Opening Time</h4>
+            <div class="widget-content">
+              <ul>
+                {footerHours.map((row) => (
+                  <li>
+                    <span class="days">{row.label}</span>
+                    <span class={row.off ? 'off-day' : 'time'}>{row.time}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+          <div class="footer-widget footer-newsletter-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1400">
+            <h4 class="widget-title mb-3 pb-2">Our Newsletter</h4>
+            <div class="widget-content">
+              <p>Delicious Tips, Dish Updates &amp; More</p>
+              <form>
+                <div class="form-group">
+                  <input type="email" class="form_control" placeholder="Enter Email Address" name="email" required>
+                  <button class="submit-btn" type="submit">Subscribe<i class="far fa-paper-plane"></i></button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="copyright-area">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="copyright-text" data-aos="fade-up" data-aos-duration="1200">
+            <p>&copy; 2025 All rights reserved by Pixelfit</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="copyright-link float-lg-end" data-aos="fade-up" data-aos-duration="1400">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms &amp; Condition</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

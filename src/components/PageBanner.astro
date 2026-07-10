@@ -1,0 +1,41 @@
+---
+// PageBanner with breadcrumb + title on the inner-page dark hero strip.
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+interface Props {
+  title: string;
+  breadcrumb?: BreadcrumbItem[];
+  bgImage?: string;
+}
+const {
+  title,
+  breadcrumb = [{ label: 'Home', href: '/' }, { label: title }],
+  // Default banner background is now a real Brew Haven coffee-shop photo
+  // so the breadcrumb area stays on-brand instead of using a generic
+  // restaurant stock gradient. Caller can still override via bgImage.
+  bgImage = '/assets/images/home-coffee/hero/hero-bg.jpg'
+} = Astro.props;
+---
+<section class="page-banner bg_cover p-r z-1" style={`background-image: url(${bgImage});`}>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="page-content text-center">
+          <h1>{title}</h1>
+          <ul>
+            {breadcrumb.map((item, idx) => (
+              <Fragment>
+                {idx > 0 && <li>/</li>}
+                <li>
+                  {item.href ? <a href={item.href}>{item.label}</a> : item.label}
+                </li>
+              </Fragment>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
