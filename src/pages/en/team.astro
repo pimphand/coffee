@@ -1,0 +1,103 @@
+---
+import Layout           from '../../layouts/Layout.astro';
+import Preloader        from '../../components/Preloader.astro';
+import Header           from '../../components/Header.astro';
+import Footer           from '../../components/Footer.astro';
+import PageBanner       from '../../components/PageBanner.astro';
+import InstagramSlider  from '../../components/InstagramSlider.astro';
+
+// 6 Brew Haven chefs — portraits rendered as 4:5 cards (see <style> below)
+// so every headshot lands in the same uniform shape regardless of the
+// source photo's native aspect ratio.
+const chefs = [
+  { img: '/assets/images/innerpage/team/team-img1.jpg', name: 'Massimo Bottura',     role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img2.jpg', name: 'Alain Ducasse',       role: 'Senior Chef' },
+  { img: '/assets/images/innerpage/team/team-img3.jpg', name: 'Gordon Ramsay',       role: 'Junior Chef' },
+  { img: '/assets/images/innerpage/team/team-img4.jpg', name: 'Isabella Fontaine',   role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img5.jpg', name: 'Marcus LeBlanc',      role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img6.jpg', name: 'Sofia DeLaurentis',   role: 'Junior Chef' }
+];
+---
+<style is:global>
+  /* Team section — force every member headshot into the same 4:5
+     portrait box so all 6 chefs render as one visually uniform grid.
+     Selector scoped to .rs-team so this never leaks to other
+     sections (about.astro, blog-details.astro, etc.) that may reuse
+     .member-image in different layouts. */
+  .rs-team .rs-team-item .member-image {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+  .rs-team .rs-team-item .member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<Layout title="Our Chefs - Brew Haven" description="Meet the talented chefs behind Brew Haven's kitchen" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner
+          title="Our Chef’s"
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Our Chef’s' }]}
+        />
+
+        <!--=== Team Grid (3 cols × 2 rows = 6 chefs) ===-->
+        <section class="rs-team py-5 mt-3">
+          <div class="container">
+            <div class="row justify-content-center py-5">
+              <div class="col-lg-7">
+                <div class="section-title mb-4">
+                  <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Our Chefs</span>
+                  <h2 class="text-anm">The Fly &amp; Fine Chefs</h2>
+                </div>
+              </div>
+              <div class="col-lg-5">
+                <div class="text-box mb-4" data-aos="fade-up" data-aos-duration="1000">
+                  <p>The Fly &amp; Fine Chefs offer gourmet cuisine with creative flair, blending elegance and flavor for a truly memorable dining experience.</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              {chefs.map((chef, idx) => (
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                  <div class="rs-team-item text-center mb-4 pb-3" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                    <div class="member-image mb-4">
+                      <img src={chef.img} alt={chef.name} loading="lazy">
+                    </div>
+                    <div class="member-info">
+                      <h3>{chef.name}</h3>
+                      <span class="position">{chef.role}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <!-- Pagination -->
+            <div class="row pb-5">
+              <div class="col-lg-12">
+                <div class="bistly-pagination text-center pb-4" data-aos="fade-up" data-aos-duration="1000">
+                  <ul>
+                    <li><a href="#">01</a></li>
+                    <li><a href="#">02</a></li>
+                    <li><a href="#"><i class="far fa-long-arrow-right"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!--=== Instagram Slider (reused global component, already some. ===-->
+        <InstagramSlider />
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

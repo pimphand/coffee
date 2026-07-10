@@ -1,0 +1,57 @@
+---
+// Tiny language switcher — sits inline in Header/future nav-right slot.
+// Renders ONE link per locale other than the current one. Clicking it
+// navigates to the SAME page in the OTHER locale, preserving both
+// pathname and any query/fragment via Astro.url.pathname.
+//
+// Design choice: show the destination locale, not the current one.
+// (e.g. on an Indonesian page, the link says "EN" so the user knows
+// what they'll get after clicking.)
+import { supportedLocales, defaultLang, getLocalizedPath } from '../i18n/utils';
+
+const currentLocale = (Astro.currentLocale ?? defaultLang) as 'id' | 'en';
+const others = supportedLocales.filter((l) => l !== currentLocale);
+const currentPath = Astro.url.pathname;
+---
+
+<div class="lang-switch" aria-label="Language switcher">
+  {others.map((l) => (
+    <a
+      href={getLocalizedPath(currentPath, l)}
+      class="lang-link"
+      data-lang={l}
+      aria-label={`Switch language to ${l.toUpperCase()}`}
+    >
+      {l.toUpperCase()}
+    </a>
+  ))}
+</div>
+
+<style is:global>
+  /* Inline language toggle — visual styling matches the small header
+     controls (Reservation button height ~). Hover fades to brand gold
+     to match the rest of the nav UI. */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 12px;
+  }
+  .lang-switch .lang-link {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 6px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 4px;
+    transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+    line-height: 1;
+  }
+  .lang-switch .lang-link:hover {
+    color: #c8a97e;
+    border-color: #c8a97e;
+    background-color: rgba(200, 169, 126, 0.08);
+  }
+</style>

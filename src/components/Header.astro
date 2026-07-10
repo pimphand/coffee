@@ -5,9 +5,15 @@
 // - Desktop brand logo  → white-on-dark circular logo (coffee theme).
 // - Mobile off-canvas   → dark logo so it stays readable on the white
 //                         mobile-menu background.
+// - Language switcher  → Live on the right; lets users flip between
+//                         Indonesian (default) and English (/en/).
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { useTranslations } from '../i18n/utils';
+
 const headerClass = 'header-area header-two transparent-header';
 const logoWhite   = '/assets/images/home-coffee/logo/logo-white.png';
 const logoMobile  = '/assets/images/home-coffee/logo/logo-main.png';
+const t = useTranslations(Astro.currentLocale);
 ---
 <style is:global>
   /* Force brand logo to a 60×60 circle on every page, regardless of
@@ -44,17 +50,17 @@ const logoMobile  = '/assets/images/home-coffee/logo/logo-main.png';
             <!-- Main Menu -->
             <nav class="main-menu">
               <ul>
-                <li class="menu-item"><a href="/">Home</a></li>
-                <li class="menu-item"><a href="/about">About Us</a></li>
-                <li class="menu-item"><a href="/menu">Menu</a></li>
-                <li class="menu-item"><a href="/team">Our Team</a></li>
-                <li class="menu-item"><a href="/blog">Blog</a></li>
-                <li class="menu-item"><a href="/contact">Contact</a></li>
+                <li class="menu-item"><a href="/">{t('nav.home')}</a></li>
+                <li class="menu-item"><a href="/about">{t('nav.about')}</a></li>
+                <li class="menu-item"><a href="/menu">{t('nav.menu')}</a></li>
+                <li class="menu-item"><a href="/team">{t('nav.team')}</a></li>
+                <li class="menu-item"><a href="/blog">{t('nav.blog')}</a></li>
+                <li class="menu-item"><a href="/contact">{t('nav.contact')}</a></li>
               </ul>
             </nav>
             <!-- Theme Nav Button (mobile CTA) -->
             <div class="theme-nav-button mt-3 d-block d-md-none">
-              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">Reservation</button>
+              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">{t('btn.reservation')}</button>
             </div>
             <!-- Theme Menu Bottom (mobile social) -->
             <div class="theme-menu-bottom mt-5 d-block d-lg-none">
@@ -69,8 +75,9 @@ const logoMobile  = '/assets/images/home-coffee/logo/logo-main.png';
           </div>
           <!-- Header Nav Right -->
           <div class="nav-right-item">
+            <LanguageSwitcher />
             <div class="nav-button d-none d-md-block">
-              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">Reservation</button>
+              <button type="button" class="theme-btn style-one border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">{t('btn.reservation')}</button>
             </div>
             <div class="navbar-toggler">
               <span></span>

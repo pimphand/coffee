@@ -1,0 +1,266 @@
+---
+import Layout           from '../../layouts/Layout.astro';
+import Preloader        from '../../components/Preloader.astro';
+import Header           from '../../components/Header.astro';
+import Footer           from '../../components/Footer.astro';
+import PageBanner       from '../../components/PageBanner.astro';
+import InstagramSlider  from '../../components/InstagramSlider.astro';
+import { posts }        from '../../data/posts';
+
+// Fun fact stats for the counter section
+const stats = [
+  { icon: 'flaticon-chef',         value: 300, suffix: '+', label: 'Culinary Expert' },
+  { icon: 'flaticon-dining-room',  value: 260, suffix: '+', label: 'Five-Star Dining' },
+  { icon: 'flaticon-offers',       value: 5,   suffix: 'K+', label: 'Food Offerings' },
+  { icon: 'flaticon-happy-face',   value: 27,  suffix: 'K+', label: 'Happy Customer' }
+];
+
+// Feature boxes on the dark features section
+const features = [
+  { icon: 'flaticon-chef', title: 'Professional Chefs' },
+  { icon: 'flaticon-chef', title: 'Online Delivery Shop' },
+  { icon: 'flaticon-chef', title: 'Fresh Ingredients' },
+  { icon: 'flaticon-chef', title: '24/7 Services' }
+];
+
+// Gallery images used in the left slick carousel.
+// All sourced from home-coffee/ (real licensed Brew-Haven coffee photos)
+// so the "Savor Story Behind the Flavor" gallery truly shows our craft.
+const galleryImages = [
+  '/assets/images/home-coffee/about/about-img1.jpg',       // barista latte art
+  '/assets/images/home-coffee/blog/blog-img1.jpg',         // roasted coffee beans
+  '/assets/images/home-coffee/gallery/enjoy-img2.png',     // cappuccino with latte art
+  '/assets/images/home-coffee/gallery/cup.png',            // rose latte art
+  '/assets/images/home-coffee/menu/menu-thumb3.png'        // cappuccino top-down
+];
+
+// Latest 3 posts for the rs-blog section
+const latestPosts = posts.slice(0, 3);
+---
+<style is:global>
+  /* "Savor Story Behind the Flavor" gallery — force all 5 thumbnails
+     to the SAME 4:3 shape so different source photos render at a
+     uniform height/size (instead of varying by their natural ratio). */
+  .bistly-about-sec .gallery-slider .gallery-item .thumbnail {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .bistly-about-sec .gallery-slider .gallery-item .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Right-side feature image: also constrain to a predictable portrait
+     aspect ratio so the whole Savor Story section reads as visually
+     balanced. Keeps the existing border-radius: 400px 400px 0 0. */
+  .bistly-about-sec .bistly-image img {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  /* "Our Recent Posts" — force the 3 blog post card thumbnails to the
+     SAME 4:3 shape so different source photos render uniformly. Scoped
+     tightly to .rs-blog so /blog list (uses .bistly-blog-sec) is not
+     affected by this rule. */
+  .rs-blog .bistly-blog-post .post-thumbnail {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .rs-blog .bistly-blog-post .post-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<Layout title="About Us - Brew Haven" description="About Brew Haven cafe and our story" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner title="About Us" breadcrumb={[{ label: 'Home', href: '/' }, { label: 'About Us' }]} />
+
+        <!-- About Section -->
+        <section class="bistly-about-sec">
+          <div class="container">
+            <div class="row py-5 align-items-end justify-content-center">
+              <div class="col-lg-7 col-md-12">
+                <div class="bistly-content-box">
+                  <div class="section-title mb-4">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">About Us</span>
+                    <h2 class="text-anm">Savor Story Behind the Flavor</h2>
+                  </div>
+                  <p class="mb-5" data-aos="fade-up" data-aos-duration="1000">Embark on a culinary journey where tradition meets innovation. Our dishes are thoughtfully crafted with the finest ingredients.</p>
+                  <!-- Gallery Slider -->
+                  <div class="gallery-slider-wrap mt-lg-5 pt-lg-5">
+                    <div class="gallery-slider">
+                      {galleryImages.map((src) => (
+                        <div class="gallery-item">
+                          <div class="thumbnail">
+                            <img src={src} alt="Brew Haven gallery">
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-5 col-md-8">
+                <div class="bistly-image mb-3 pb-3 mt-xl-0 mt-5" data-aos="fade-down" data-aos-duration="1000">
+                  <img src="/assets/images/home-coffee/gallery/enjoy-img1.png" alt="Craft coffee at Brew Haven">
+                </div>
+                <div class="text-box" data-aos="fade-up" data-aos-duration="1000">
+                  <p class="mb-3 pb-2">Embark on a culinary journey where tradition meets innovation. Our dishes are thoughtfully.</p>
+                  <a href="/contact" class="theme-btn style-one">Contact Us</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Fun Fact Section -->
+        <section class="bistly-fun-fact py-5">
+          <div class="container">
+            <div class="counter-item-wrapper">
+              <div class="row py-lg-4">
+                {stats.map((stat, idx) => (
+                  <div class="col-lg-3 col-sm-6 counter-item-border">
+                    <div class="bistly-counter-item text-center mb-4" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                      <div class="icon"><i class={stat.icon}></i></div>
+                      <div class="content">
+                        <h2><span class="counter">{stat.value}</span>{stat.suffix}</h2>
+                        <p>{stat.label}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Features Section (dark) -->
+        <section class="bistly-features-sec py-5">
+          <div class="container">
+            <div class="row align-items-center py-5 justify-content-center">
+              <div class="col-xl-6 col-lg-8">
+                <div class="bistly-content-box text-white">
+                  <div class="section-title mb-4">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Simple, Classic, Delicious</span>
+                    <h2 class="text-anm">Fine Dining Rooted in the City Heartbeat</h2>
+                  </div>
+                  <p class="mb-5" data-aos="fade-up" data-aos-duration="1000">Experience fine dining crafted with elegance and passion, perfectly rooted in the vibrant rhythm and soul of the city's heartbeat.</p>
+                  <div class="row">
+                    {features.map((f, idx) => (
+                      <div class="col-sm-6">
+                        <div class="bistly-iconic-box mb-4" data-aos="fade-up" data-aos-duration={1200 + idx * 100}>
+                          <div class="icon"><i class={f.icon}></i></div>
+                          <div class="content"><h5>{f.title}</h5></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div class="bistly-button mt-4" data-aos="fade-up" data-aos-duration="1600">
+                    <a href="/#menu" class="theme-btn style-one">View all menu</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-8">
+                <div class="bistly-image text-center text-xl-end mt-xl-0 mt-5" data-aos="fade-down" data-aos-duration="1800">
+                  <img src="/assets/images/home-coffee/gallery/cup.png" alt="Fine dining at Brew Haven">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Intro / Video Section -->
+        <section class="bistly-intro-sec bg_cover py-5 p-r z-1"
+                 style="background-image: url(/assets/images/home-coffee/hero/hero-bg.jpg);">
+          <div class="container">
+            <div class="row justify-content-center py-xl-5">
+              <div class="col-xl-6 col-md-10">
+                <div class="bistly-content-box text-center pt-4 pb-2">
+                  <a href="https://www.youtube.com/watch?v=Fjf20HmHRd8" class="video-popup mb-4" data-aos="fade-down" data-aos-duration="1400">
+                    <i class="fas fa-play"></i>
+                  </a>
+                  <h2 class="text-anm">Satisfy Your Cravings Watch Now!</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Testimonial Section -->
+        <section class="rs-testimonial py-5">
+          <div class="container">
+            <div class="row justify-content-center py-5">
+              <div class="col-xl-8 col-lg-10">
+                <div class="testimonial-slider py-lg-4">
+                  <div class="bistly-testimonial-item">
+                    <div class="testimonial-content">
+                      <div class="ratings mb-3">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                      </div>
+                      <p>Italian Redefined offers a delightful culinary experience Each dish blends traditional Italian flavors with contemporary flair. Fresh ingredients</p>
+                      <span>John Smith / Main Chef</span>
+                    </div>
+                  </div>
+                  <div class="bistly-testimonial-item">
+                    <div class="testimonial-content">
+                      <div class="ratings mb-3">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                      </div>
+                      <p>Italian Redefined offers a delightful culinary experience Each dish blends traditional Italian flavors with contemporary flair. Fresh ingredients</p>
+                      <span>John Smith / Main Chef</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent Blog Section -->
+        <section class="rs-blog py-lg-5">
+          <div class="container">
+            <div class="row justify-content-center py-5">
+              <div class="col-lg-7">
+                <div class="section-title text-center mt-3">
+                  <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Latest Blog</span>
+                  <h2 class="text-anm">Our Recent Posts</h2>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center pb-5">
+              {latestPosts.map((post, idx) => (
+                <div class="col-xl-4 col-md-6 col-sm-12">
+                  <div class="bistly-blog-post mb-3" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                    <div class="post-thumbnail">
+                      <img src={post.image} alt={post.title}>
+                    </div>
+                    <div class="post-content">
+                      <div class="post-meta">
+                        <span><i class="far fa-user"></i>By {post.author}</span>
+                        <span><i class="far fa-calendar-alt"></i>{post.date}</span>
+                      </div>
+                      <h4><a href={`/blog/${post.slug}`}>{post.title}</a></h4>
+                      <a href={`/blog/${post.slug}`} class="read-more style-one">Read More</a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <InstagramSlider />
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

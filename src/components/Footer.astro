@@ -2,14 +2,17 @@
 // Single reusable site footer. No variant prop.
 // All pages show the same coffee-themed dark footer with one consistent
 // brand logo and the same decorative shape.
+import { useTranslations } from '../i18n/utils';
+
 const footerClass  = 'default-footer cs-footer pt-5 p-r z-1';
 const shapeTwoSrc  = '/assets/images/home-coffee/footer/shape2.png';
 const footerLogo   = '/assets/images/home-coffee/logo/logo-white.png';
+const t = useTranslations(Astro.currentLocale);
 
 const footerHours = [
-  { label: 'Mon - Thu:', time: '10:00 am - 01:00 am' },
-  { label: 'Fri - Sat:', time: '10:00 am - 01:00 am' },
-  { label: 'Sunday:',   time: 'Off Day', off: true }
+  { label: t('footer.dayShort.monThu'), time: '10:00 am - 01:00 am' },
+  { label: t('footer.dayShort.friSat'), time: '10:00 am - 01:00 am' },
+  { label: t('footer.dayShort.sunday'), time: t('footer.dayShort.off'), off: true }
 ];
 ---
 <style is:global>
@@ -52,7 +55,7 @@ const footerHours = [
           <div class="footer-widget footer-about-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="800">
             <div class="widget-content">
               <a href="/" class="footer-brand mb-4"><img src={footerLogo} alt="Brew Haven"></a>
-              <p class="mb-4">Bistly Restaurant offers flavorful dishes, cozy ambiance.</p>
+              <p class="mb-4">{t('footer.tagline')}</p>
               <div class="social-box">
                 <a href="#"><i class="fab fa-facebook-f"></i></a>
                 <a href="#"><i class="fab fa-twitter"></i></a>
@@ -64,21 +67,21 @@ const footerHours = [
         </div>
         <div class="col-xl-2 col-md-6">
           <div class="footer-widget footer-nav-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1000">
-            <h4 class="widget-title mb-3 pb-2">Useful Link</h4>
+            <h4 class="widget-title mb-3 pb-2">{t('footer.usefulLink')}</h4>
             <div class="widget-content">
               <ul>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/team">Our Team</a></li>
-                <li><a href="/menu">Our Menu</a></li>
-                <li><a href="/blog">Our Blog</a></li>
-                <li><a href="/contact">Contact</a></li>
+                <li><a href="/about">{t('nav.about')}</a></li>
+                <li><a href="/team">{t('nav.team')}</a></li>
+                <li><a href="/menu">{t('nav.menu')}</a></li>
+                <li><a href="/blog">{t('nav.blog')}</a></li>
+                <li><a href="/contact">{t('nav.contact')}</a></li>
               </ul>
             </div>
           </div>
         </div>
         <div class="col-xl-3 col-md-6">
           <div class="footer-widget footer-time-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1200">
-            <h4 class="widget-title mb-3 pb-2">Opening Time</h4>
+            <h4 class="widget-title mb-3 pb-2">{t('footer.openingTime')}</h4>
             <div class="widget-content">
               <ul>
                 {footerHours.map((row) => (
@@ -93,13 +96,13 @@ const footerHours = [
         </div>
         <div class="col-xl-4 col-md-6">
           <div class="footer-widget footer-newsletter-widget mb-4 pb-3" data-aos="fade-up" data-aos-duration="1400">
-            <h4 class="widget-title mb-3 pb-2">Our Newsletter</h4>
+            <h4 class="widget-title mb-3 pb-2">{t('footer.newsletterTitle')}</h4>
             <div class="widget-content">
-              <p>Delicious Tips, Dish Updates &amp; More</p>
+              <p>{t('footer.newsletterSub')}</p>
               <form>
                 <div class="form-group">
-                  <input type="email" class="form_control" placeholder="Enter Email Address" name="email" required>
-                  <button class="submit-btn" type="submit">Subscribe<i class="far fa-paper-plane"></i></button>
+                  <input type="email" class="form_control" placeholder={t('footer.placeholderEmail')} name="email" required>
+                  <button class="submit-btn" type="submit">{t('footer.subscribeBtn')}<i class="far fa-paper-plane"></i></button>
                 </div>
               </form>
             </div>

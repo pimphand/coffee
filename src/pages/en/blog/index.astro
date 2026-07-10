@@ -1,0 +1,75 @@
+---
+import Layout           from '../../../layouts/Layout.astro';
+import Preloader        from '../../../components/Preloader.astro';
+import Header           from '../../../components/Header.astro';
+import Footer           from '../../../components/Footer.astro';
+import PageBanner       from '../../../components/PageBanner.astro';
+import InstagramSlider  from '../../../components/InstagramSlider.astro';
+import { posts }        from '../../../data/posts';
+---
+<Layout title="Blog - Brew Haven" description="Latest blog posts from Brew Haven" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner title="Blog Grid" breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Blog Grid' }]} />
+
+        <section class="bistly-blog-sec py-5">
+          <div class="container">
+            <div class="row py-5 align-items-center">
+              <div class="col-lg-6">
+                <div class="section-title mb-4">
+                  <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Latest Blog</span>
+                  <h2 class="text-anm">Our Recent Posts</h2>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="text-box mb-4" data-aos="fade-up" data-aos-duration="1000">
+                  <p>Discover our latest blog posts filled with sweet inspirations, helpful tips and behind-the-scenes stories from our dessert kitchen.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              {posts.map((post, idx) => (
+                <div class="col-xl-4 col-md-6">
+                  <div class="bistly-blog-post mb-4" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                    <div class="post-thumbnail">
+                      <img src={post.image} alt={post.title}>
+                    </div>
+                    <div class="post-content">
+                      <div class="post-meta">
+                        <span><i class="far fa-user"></i>By {post.author}</span>
+                        <span><i class="far fa-calendar-alt"></i>{post.date}</span>
+                      </div>
+                      <h4><a href={`/blog/${post.slug}`}>{post.title}</a></h4>
+                      <a href={`/blog/${post.slug}`} class="read-more style-one">Read More</a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div class="row pb-5">
+              <div class="col-lg-12">
+                <div class="bistly-pagination text-center mt-4 pb-lx-4">
+                  <ul>
+                    <li><a href="#">01</a></li>
+                    <li><a href="#">02</a></li>
+                    <li><a href="#"><i class="far fa-long-arrow-right"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <InstagramSlider />
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

@@ -1,5 +1,7 @@
 ---
 // PageBanner with breadcrumb + title on the inner-page dark hero strip.
+import { useTranslations } from '../i18n/utils';
+const t = useTranslations(Astro.currentLocale);
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -11,7 +13,7 @@ interface Props {
 }
 const {
   title,
-  breadcrumb = [{ label: 'Home', href: '/' }, { label: title }],
+  breadcrumb = [{ label: t('page.home'), href: '/' }, { label: title }],
   // Default banner background is now a real Brew Haven coffee-shop photo
   // so the breadcrumb area stays on-brand instead of using a generic
   // restaurant stock gradient. Caller can still override via bgImage.

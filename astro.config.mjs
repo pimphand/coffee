@@ -10,5 +10,11 @@ export default defineConfig({
   build: {
     // Keep asset paths predictable for our copied template assets
     assets: 'assets'
+  },
+  // Bilingual site — Indonesian (default, no URL prefix) + English (/en/)
+  i18n: {
+    defaultLocale: 'id',
+    locales: ['id', 'en'],
+    routing: { prefixDefaultLocale: false }
   }
 });

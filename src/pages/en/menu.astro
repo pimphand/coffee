@@ -1,0 +1,177 @@
+---
+import Layout      from '../../layouts/Layout.astro';
+import Preloader   from '../../components/Preloader.astro';
+import Header      from '../../components/Header.astro';
+import Footer      from '../../components/Footer.astro';
+import PageBanner  from '../../components/PageBanner.astro';
+
+// 8 main coffee creations — all use real Brew Haven coffee photos.
+const coffeeMenu = [
+  { img: '/assets/images/home-coffee/menu/menu-thumb2.png',     title: 'Espresso',           desc: 'A strong, concentrated coffee shot — the bold base for every drink we serve.',           price: '$4.50' },
+  { img: '/assets/images/home-coffee/menu/menu-thumb3.png',     title: 'Cappuccino',         desc: 'Equal parts espresso, steamed milk, and velvety milk foam. Rich, balanced, and frothy.',  price: '$5.50' },
+  { img: '/assets/images/home-coffee/menu/menu-thumb4.png',     title: 'Flat White',         desc: 'Higher espresso-to-milk ratio with a velvety microfoam for a richer, creamier sip.',     price: '$5.00' },
+  { img: '/assets/images/home-coffee/menu/menu-thumb5.png',     title: 'Macchiato',          desc: 'Espresso "stained" with a small mark of steamed milk and foam.',                          price: '$5.50' },
+  { img: '/assets/images/home-coffee/menu/menu-thumb1.png',     title: 'Americano',          desc: 'Espresso diluted with hot water for a smoother, longer cup that keeps you going.',         price: '$4.00' },
+  { img: '/assets/images/home-coffee/about/about-img1.jpg',     title: 'Mocha Latte',        desc: 'Latte with rich chocolate sauce, topped with whipped cream and a dusting of cocoa.',        price: '$6.00' },
+  { img: '/assets/images/home-coffee/gallery/enjoy-img2.png',   title: 'Honey Lavender Latte', desc: 'Floral lavender and golden honey swirled into our signature latte.',                      price: '$6.50' },
+  { img: '/assets/images/home-coffee/gallery/cup.png',          title: 'Cold Brew',           desc: 'Slow-steeped for sixteen hours, served over ice for a smooth, refreshing kick.',          price: '$5.50' }
+];
+
+// 3 snack / pastry items — filter coffee-friendly treats.
+const snackMenu = [
+  { img: '/assets/images/home-coffee/menu/menu-thumb6.png',     title: 'Chocolate Fudge Cake', desc: 'Rich, moist chocolate layers with creamy ganache — pairs beautifully with espresso.',     price: '$6.50' },
+  { img: '/assets/images/home-coffee/menu/menu-thumb7.png',     title: 'Cinnamon Roll',         desc: 'Soft, pillowy dough swirled with cinnamon and topped with sweet icing.',                  price: '$4.50' },
+  { img: '/assets/images/home-coffee/gallery/enjoy-img1.png',   title: 'Butter Croissant',      desc: 'Flaky, buttery French pastry with delicate layers — pulled fresh from the oven daily.',    price: '$3.50' }
+];
+---
+<style is:global>
+  /* Menu product cards — force every tile to a uniform 4:3 box so all
+     8 + 3 products share identical height/shape across both grids.
+     .product-thumbnail already has overflow:hidden in innerpages.css
+     so the inner-scale hover animation stays clipped cleanly. */
+  .bistly-menu-grid-sec .bistly-product-item .product-thumbnail {
+    aspect-ratio: 4 / 3;
+  }
+  .bistly-menu-grid-sec .bistly-product-item .product-thumbnail img {
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<Layout title="Menu Grid - Brew Haven" description="Browse our coffee and pastry menu at Brew Haven" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner
+          title="Menu Grid"
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Menu Grid' }]}
+        />
+
+        <!-- Coffee Creations Grid (4 columns) -->
+        <section class="bistly-menu-grid-sec py-xl-5">
+          <div class="container">
+            <div class="row py-5">
+              <div class="col-lg-12">
+                <div class="section-title text-center mt-3">
+                  <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Our Coffee Menu</span>
+                  <h2 class="text-anm">Choose Your Coffee</h2>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              {coffeeMenu.map((item, idx) => (
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                  <div class="bistly-product-item mb-4" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                    <div class="product-thumbnail">
+                      <img src={item.img} alt={item.title}>
+                      <div class="hover-overlay">
+                        <div class="action-button">
+                          <a href="#"><i class="far fa-shopping-basket"></i></a>
+                          <a href="#"><i class="far fa-heart"></i></a>
+                          <a href="#"><i class="far fa-eye"></i></a>
+                          <a href="#"><i class="far fa-sync-alt"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="product-info">
+                      <div class="ratings-price">
+                        <div class="ratings">
+                          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <div class="price">{item.price}</div>
+                      </div>
+                      <h4><a href="#">{item.title}</a></h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <!-- Pagination -->
+            <div class="row py-5">
+              <div class="col-lg-12">
+                <div class="bistly-pagination text-center pb-4" data-aos="fade-up" data-aos-duration="2300">
+                  <ul>
+                    <li><a href="#">01</a></li>
+                    <li><a href="#">02</a></li>
+                    <li><a href="#"><i class="far fa-long-arrow-right"></i></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Booking Section (CTA) -->
+        <section class="rs-booking bg_cover py-5 p-r z-1"
+                 style="background-image: url(/assets/images/home-coffee/gallery/cup.png);">
+          <div class="container">
+            <div class="row py-xl-5 justify-content-center">
+              <div class="col-lg-6">
+                <div class="bistly-content-box text-center">
+                  <div class="section-title text-center text-white mb-5">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Book Now</span>
+                    <h2 class="text-anm">Booking Your Table</h2>
+                  </div>
+                  <div class="bistly-button" data-aos="fade-up" data-aos-duration="1200">
+                    <button type="button" class="theme-btn style-two border-0" data-bs-toggle="modal" data-bs-target="#reservationModal">Make A Reservation</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Snack / Pastry Grid (3 columns) -->
+        <section class="bistly-menu-grid-sec py-5">
+          <div class="container">
+            <div class="row py-5">
+              <div class="col-lg-12">
+                <div class="section-title text-center mt-4">
+                  <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Sweet & Savory</span>
+                  <h2 class="text-anm">Perfect Pairings</h2>
+                </div>
+              </div>
+            </div>
+            <div class="row pb-5">
+              {snackMenu.map((item, idx) => (
+                <div class="col-xl-4 col-md-6 col-sm-12">
+                  <div class="bistly-product-item mb-4" data-aos="fade-up" data-aos-duration={800 + idx * 200}>
+                    <div class="product-thumbnail">
+                      <img src={item.img} alt={item.title}>
+                      <div class="hover-overlay">
+                        <div class="action-button">
+                          <a href="#"><i class="far fa-shopping-basket"></i></a>
+                          <a href="#"><i class="far fa-heart"></i></a>
+                          <a href="#"><i class="far fa-eye"></i></a>
+                          <a href="#"><i class="far fa-sync-alt"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="product-info">
+                      <div class="ratings-price">
+                        <div class="ratings">
+                          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <div class="price">{item.price}</div>
+                      </div>
+                      <h3><a href="#">{item.title}</a></h3>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>

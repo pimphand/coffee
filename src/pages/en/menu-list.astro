@@ -1,0 +1,156 @@
+---
+import Layout          from '../../layouts/Layout.astro';
+import Preloader       from '../../components/Preloader.astro';
+import Header          from '../../components/Header.astro';
+import Footer          from '../../components/Footer.astro';
+import PageBanner      from '../../components/PageBanner.astro';
+import InstagramSlider from '../../components/InstagramSlider.astro';
+
+// 3 sections × 6 items = 18 dishes mapped verbatim to the original template's
+// innerpage/menu/menu-thumb1-18.jpg images. Each section renders as a left
+// + right column of 3 list items (horizontal: thumb | content).
+
+const section1 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb1.jpg',  title: 'Garlic Herb Bruschetta',   desc: 'Toasted bread topped with garlic, fresh herbs, tomato, and olive oil.',          price: '$36.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb3.jpg',  title: 'Pan-Seared Salmon',       desc: 'Atlantic salmon seared golden, finished with lemon butter and seasonal greens.', price: '$52.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb5.jpg',  title: 'Spicy Chicken Wings',     desc: 'Crispy wings tossed in our signature chili glaze with a cooling dip.',           price: '$62.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb2.jpg',  title: 'Creamy Mushroom Pasta',   desc: 'Pappardelle in a rich wild-mushroom cream sauce with a touch of truffle.',         price: '$61.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb4.jpg',  title: 'Classic Beef Burger',     desc: 'Half-pound Angus patty, aged cheddar, brioche bun, and hand-cut fries.',         price: '$53.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb6.jpg',  title: 'Grilled Herb Chicken',    desc: 'Marinated chicken breast grilled over open flame with rosemary and thyme.',       price: '$34.00' }
+];
+
+const section2 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb7.jpg',  title: 'Classic Club Sandwich',    desc: 'Triple-decker with turkey, bacon, lettuce, tomato, and herbed mayo.',            price: '$65.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb9.jpg',  title: 'Spicy Chicken Rice Bowl',  desc: 'Spicy chicken over jasmine rice with seasonal vegetables and house sauce.',     price: '$43.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb11.jpg', title: 'Thai Basil Chicken',       desc: 'Stir-fried chicken with Thai basil, garlic, chili, and a savory soy glaze.',     price: '$58.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb8.jpg',  title: 'Margherita Flatbread',     desc: 'Flatbread topped with fresh mozzarella, basil, tomato, and extra virgin oil.',   price: '$39.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb10.jpg', title: 'Mediterranean Quinoa',     desc: 'Quinoa with cucumbers, tomatoes, olives, feta, and a zesty lemon dressing.',     price: '$49.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb12.jpg', title: 'Lemon Herb Grilled Fish',  desc: 'Lightly grilled fish with lemon, fresh herbs, and delicate spices.',             price: '$47.00' }
+];
+
+const section3 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb13.jpg', title: 'Creamy Tuscan Shrimp',     desc: 'Shrimp in creamy garlic sauce with spinach, sun-dried tomatoes, and pasta.',      price: '$63.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb15.jpg', title: 'Slow-Cooked Lamb Shank',   desc: 'Tender lamb shank braised with herbs, warm spices, and a rich savory gravy.',     price: '$61.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb17.jpg', title: 'Chargrilled Vegetables',  desc: 'Seasonal vegetables chargrilled with herbs, olive oil, and smoked sea salt.',    price: '$48.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb14.jpg', title: 'Tandoori Chicken Rice',    desc: 'Tandoori chicken served over aromatic jeera rice with mint yogurt sauce.',        price: '$76.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb16.jpg', title: 'Green Curry Jasmine',      desc: 'Thai green curry with vegetables, coconut milk, and fragrant jasmine rice.',      price: '$46.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb18.jpg', title: 'Barbecue Glazed Chicken',  desc: 'Juicy grilled chicken coated in a smoky-sweet house barbecue glaze.',             price: '$55.00' }
+];
+
+// Section meta — eyebrow + headline for each menu block
+const sections = [
+  { eyebrow: 'Our Food Menu', headline: 'Exclusive Hourly Specials', items: section1 },
+  { eyebrow: 'Lunch',          headline: 'Taste the Afternoon',       items: section2 },
+  { eyebrow: 'Dinner',         headline: 'Evening Indulgence',        items: section3 }
+];
+---
+
+<style is:global>
+  /* bistly-menu-list — the LIST view of the menu. Each row is
+     horizontal (thumbnail | content). Force every thumbnail into a
+     uniform 1:1 square so 18 photos of various source aspect ratios
+     render identically in the list. The original innerpages.css has
+     a basic `.bistly-menu-list-item .thumbnail img { width: 100%; }`
+     rule; we add the missing height + object-fit here without
+     touching the shared vendor rule. */
+  .bistly-menu-list .bistly-menu-list-item .thumbnail {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .bistly-menu-list .bistly-menu-list-item .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+
+<Layout title="Menu List - Brew Haven" description="Browse our lunch and dinner offerings in a clean list view" pageStyle="inner">
+  <Preloader />
+  <Header />
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <PageBanner
+          title="Menu List"
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Menu List' }]}
+        />
+
+        <!--=== Menu List Sections (3 × 6 items in 2-col lists) ===-->
+        {sections.map((sec, secIdx) => (
+          <section class={`bistly-menu-list ${secIdx === 1 ? '' : 'py-5'}`}>
+            <div class="container">
+              <div class={`row justify-content-center ${secIdx === 1 ? 'py-5' : ''}`}>
+                <div class="col-lg-8">
+                  <div class="section-title text-center mt-3">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">{sec.eyebrow}</span>
+                    <h2 class="text-anm">{sec.headline}</h2>
+                  </div>
+                </div>
+              </div>
+              <div class={`row justify-content-center ${secIdx !== 1 ? 'pb-5' : ''}`}>
+                <!-- Left column: items 1-3 -->
+                <div class="col-xl-6 col-md-8">
+                  <div class="menu-list-wrap pe-xl-4">
+                    {sec.items.slice(0, 3).map((item, idx) => (
+                      <div class="bistly-menu-list-item mb-4" data-aos="fade-up" data-aos-duration={800 + (secIdx * 3 + idx) * 200}>
+                        <div class="thumbnail">
+                          <img src={item.img} alt={item.title} loading="lazy">
+                        </div>
+                        <div class="content">
+                          <h4>
+                            <a href="#">{item.title}</a>
+                            <span class="price">{item.price}</span>
+                          </h4>
+                          <p>{item.desc}</p>
+                          <div class="ratings">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <!-- Right column: items 4-6 -->
+                <div class="col-xl-6 col-md-8">
+                  <div class="menu-list-wrap ps-xl-4">
+                    {sec.items.slice(3, 6).map((item, idx) => (
+                      <div class="bistly-menu-list-item mb-4" data-aos="fade-up" data-aos-duration={800 + (secIdx * 3 + idx) * 200}>
+                        <div class="thumbnail">
+                          <img src={item.img} alt={item.title} loading="lazy">
+                        </div>
+                        <div class="content">
+                          <h4>
+                            <a href="#">{item.title}</a>
+                            <span class="price">{item.price}</span>
+                          </h4>
+                          <p>{item.desc}</p>
+                          <div class="ratings">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        ))}
+
+        <InstagramSlider />
+      </main>
+
+      <Footer />
+    </div>
+  </div>
+</Layout>
