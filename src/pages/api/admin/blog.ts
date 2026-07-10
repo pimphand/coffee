@@ -41,16 +41,16 @@ export const POST: APIRoute = async ({ request }) => {
   let body: any;
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
-  const { slug, title_en, title_id, excerpt_en, excerpt_id, content_en, content_id, image, author_name } = body;
-  if (!slug || !title_en || !title_id) {
-    return json({ error: 'slug, title_en, and title_id are required' }, 400);
+  const { slug, title_en, title_id, title_cn, excerpt_en, excerpt_id, excerpt_cn, content_en, content_id, content_cn, image, author_name } = body;
+  if (!slug || (!title_en && !title_id && !title_cn)) {
+    return json({ error: 'slug and at least one title are required' }, 400);
   }
 
   try {
     const rows = await query<any>(
-      `INSERT INTO coffee_blog_posts (slug, title_en, title_id, excerpt_en, excerpt_id, content_en, content_id, image, author_name)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-      [slug, title_en, title_id, excerpt_en || '', excerpt_id || '', content_en || '', content_id || '', image || '', author_name || 'Brew Haven']
+      `INSERT INTO coffee_blog_posts (slug, title_en, title_id, title_cn, excerpt_en, excerpt_id, excerpt_cn, content_en, content_id, content_cn, image, author_name)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+      [slug, title_en || null, title_id || null, title_cn || null, excerpt_en || '', excerpt_id || '', excerpt_cn || '', content_en || '', content_id || '', content_cn || '', image || '', author_name || 'Brew Haven']
     );
     return json({ ok: true, post: rows[0] }, 201);
   } catch (e: any) {
@@ -66,17 +66,17 @@ export const PUT: APIRoute = async ({ request }) => {
   let body: any;
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
-  const { id, slug, title_en, title_id, excerpt_en, excerpt_id, content_en, content_id, image, author_name } = body;
+  const { id, slug, title_en, title_id, title_cn, excerpt_en, excerpt_id, excerpt_cn, content_en, content_id, content_cn, image, author_name } = body;
   if (!id) return json({ error: 'id is required' }, 400);
 
   try {
     const rows = await query<any>(
       `UPDATE coffee_blog_posts SET
-         slug=$1, title_en=$2, title_id=$3, excerpt_en=$4, excerpt_id=$5,
-         content_en=$6, content_id=$7, image=$8, author_name=$9,
+         slug=$1, title_en=$2, title_id=$3, title_cn=$4, excerpt_en=$5, excerpt_id=$6,
+         excerpt_cn=$7, content_en=$8, content_id=$9, content_cn=$10, image=$11, author_name=$12,
          updated_at = now()
-       WHERE id=$10 RETURNING *`,
-      [slug, title_en, title_id, excerpt_en || '', excerpt_id || '', content_en || '', content_id || '', image || '', author_name || '', id]
+       WHERE id=$13 RETURNING *`,
+      [slug, title_en || null, title_id || null, title_cn || null, excerpt_en || '', excerpt_id || '', excerpt_cn || '', content_en || '', content_id || '', content_cn || '', image || '', author_name || '', id]
     );
     if (rows.length === 0) return json({ error: 'Post not found' }, 404);
     return json({ ok: true, post: rows[0] }, 200);

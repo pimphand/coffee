@@ -1,24 +1,16 @@
 ---
 // Latest 3 blog posts preview — fetched from DB with fallback.
+// Locale-aware: shows English on /en/ pages, Indonesian on /id/ pages.
 import { BlogPosts } from '../lib/db';
 import { posts as fallbackPosts } from '../data/posts';
+import { localizeBlogPost } from '../i18n/utils';
+
+const locale = Astro.currentLocale ?? 'id';
 
 const dbPosts = await BlogPosts.list(3);
 const posts = dbPosts.length > 0
-  ? dbPosts.map((p) => ({
-      img: p.image,
-      title: p.title_en,
-      excerpt: p.excerpt_en,
-      author: `By ${p.author_name}`,
-      date: new Date(p.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    }))
-  : fallbackPosts.slice(0, 3).map((p) => ({
-      img: p.image,
-      title: p.title,
-      excerpt: p.excerpt,
-      author: `By ${p.author}`,
-      date: p.date,
-    }));
+  ? dbPosts.map((p) => localizeBlogPost(p, locale))
+  : fallbackPosts.slice(0, 3).map((p) => localizeBlogPost(p, locale));
 ---
 <section class="cs-blog-sec py-5" id="blog">
   <div class="container">
@@ -35,7 +27,7 @@ const posts = dbPosts.length > 0
         <div class="col-xl-4 col-md-6 col-sm-12">
           <div class="bistly-blog-post mb-4" data-aos="fade-up" data-aos-duration={1000 + idx * 300}>
             <div class="post-thumbnail">
-              <img src={post.img} alt={post.title}>
+              <img src={post.image} alt={post.title}>
             </div>
             <div class="post-content">
               <div class="post-meta">

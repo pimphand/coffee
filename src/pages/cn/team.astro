@@ -1,0 +1,28 @@
+---
+import Layout           from '../../layouts/Layout.astro';
+import Preloader        from '../../components/Preloader.astro';
+import Header           from '../../components/Header.astro';
+import Footer           from '../../components/Footer.astro';
+import PageBanner       from '../../components/PageBanner.astro';
+import InstagramSlider  from '../../components/InstagramSlider.astro';
+
+const chefs = [
+  { img: '/assets/images/innerpage/team/team-img1.webp', name: 'Massimo Bottura',     role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img2.webp', name: 'Alain Ducasse',       role: 'Senior Chef' },
+  { img: '/assets/images/innerpage/team/team-img3.webp', name: 'Gordon Ramsay',       role: 'Junior Chef' },
+  { img: '/assets/images/innerpage/team/team-img4.webp', name: 'Isabella Fontaine',   role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img5.webp', name: 'Marcus LeBlanc',      role: 'Main Chef' },
+  { img: '/assets/images/innerpage/team/team-img6.webp', name: 'Sofia DeLaurentis',   role: 'Junior Chef' }
+];
+---
+<Layout title="Our Chefs - Brew Haven" description="Meet the talented chefs" pageStyle="inner">
+  <Preloader /><Header />
+  <div id="smooth-wrapper"><div id="smooth-content"><main>
+    <PageBanner title="Our Chef's" breadcrumb={[{ label: 'Home', href: '/' }, { label: "Our Chef's" }]} />
+    <section class="rs-team py-5 mt-3"><div class="container">
+      <div class="row justify-content-center py-5"><div class="col-lg-7"><div class="section-title mb-4"><span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Our Chefs</span><h2 class="text-anm">The Fly &amp; Fine Chefs</h2></div></div><div class="col-lg-5"><div class="text-box mb-4" data-aos="fade-up" data-aos-duration="1000"><p>The Fly &amp; Fine Chefs offer gourmet cuisine with creative flair, blending elegance and flavor for a truly memorable dining experience.</p></div></div></div>
+      <div class="row">{chefs.map((chef, idx) => (<div class="col-lg-4 col-md-6 col-sm-12"><div class="rs-team-item text-center mb-4 pb-3" data-aos="fade-up" data-aos-duration={800 + idx * 200}><div class="member-image mb-4"><img src={chef.img} alt={chef.name} loading="lazy"></div><div class="member-info"><h3>{chef.name}</h3><span class="position">{chef.role}</span></div></div></div>))}</div>
+    </div></section>
+    <InstagramSlider />
+  </main><Footer /></div></div>
+</Layout>

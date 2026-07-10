@@ -7,19 +7,15 @@ import PageBanner       from '../../components/PageBanner.astro';
 import InstagramSlider  from '../../components/InstagramSlider.astro';
 import { posts as fallbackPosts } from '../../data/posts';
 import { BlogPosts }    from '../../lib/db';
+import { localizeBlogPost } from '../../i18n/utils';
+
+const locale = Astro.currentLocale ?? 'id';
 
 // Fetch from DB — fall back to hardcoded posts.ts when the DB is unreachable
 const dbPosts = await BlogPosts.list();
 const posts = dbPosts.length > 0
-  ? dbPosts.map((p) => ({
-      slug: p.slug,
-      title: p.title_en,
-      excerpt: p.excerpt_en,
-      image: p.image,
-      author: p.author_name,
-      date: new Date(p.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    }))
-  : fallbackPosts;
+  ? dbPosts.map((p) => localizeBlogPost(p, locale))
+  : fallbackPosts.map((p) => localizeBlogPost(p, locale));
 ---
 <Layout title="Blog - Brew Haven" description="Latest blog posts from Brew Haven" pageStyle="inner">
   <Preloader />

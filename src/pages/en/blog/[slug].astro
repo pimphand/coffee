@@ -1,23 +1,21 @@
 ---
-// Blog detail page (SSR). Fetches the post from the DB by slug;
-// falls back to the hardcoded posts.ts array when the DB is offline.
-// Serves both /blog/[slug] (id) and /en/blog/[slug] (en) via locale-aware content.
+// English blog detail page. Uses the same locale-aware logic as the
+// default (Indonesian) detail page — just routes through /en/blog/.
 export const prerender = false;
 
-import Layout     from '../../layouts/Layout.astro';
-import Preloader  from '../../components/Preloader.astro';
-import Header     from '../../components/Header.astro';
-import Footer     from '../../components/Footer.astro';
-import PageBanner from '../../components/PageBanner.astro';
-import { posts as fallbackPosts } from '../../data/posts';
-import { BlogPosts } from '../../lib/db';
-import { localizeBlogPost, type LocalizedBlogPost } from '../../i18n/utils';
+import Layout     from '../../../layouts/Layout.astro';
+import Preloader  from '../../../components/Preloader.astro';
+import Header     from '../../../components/Header.astro';
+import Footer     from '../../../components/Footer.astro';
+import PageBanner from '../../../components/PageBanner.astro';
+import { posts as fallbackPosts } from '../../../data/posts';
+import { BlogPosts } from '../../../lib/db';
+import { localizeBlogPost, type LocalizedBlogPost } from '../../../i18n/utils';
 
 const { slug } = Astro.params;
-const locale = Astro.currentLocale ?? 'id';
-if (!slug) return Astro.redirect('/blog');
+const locale = Astro.currentLocale ?? 'en';
+if (!slug) return Astro.redirect('/en/blog');
 
-// DB first, fallback to hardcoded data
 const dbRows = await BlogPosts.bySlug(slug);
 const dbPost = dbRows[0] ?? null;
 const fallback = fallbackPosts.find((p) => p.slug === slug);
@@ -28,9 +26,8 @@ const post: LocalizedBlogPost | null = dbPost
     ? localizeBlogPost(fallback, locale)
     : null;
 
-if (!post) return Astro.redirect('/blog');
+if (!post) return Astro.redirect('/en/blog');
 
-// Iconic-box checklist mid-content (matches blog-details.html)
 const checklist = [
   { icon: 'flaticon-vegetable-1',  title: 'Fresh & Hygienic Meals' },
   { icon: 'flaticon-package',      title: 'Temperature-Controlled Packaging' },
@@ -38,7 +35,6 @@ const checklist = [
   { icon: 'flaticon-24-hours-support', title: 'Reliable Delivery & Support' }
 ];
 
-// Original template groups cooking methods 2-per-<ul> across 3 columns.
 const cookingMethodPairs = [
   ['Steaming', 'Grilling'],
   ['Roasting', 'Boiling'],
@@ -54,7 +50,7 @@ const cookingMethodPairs = [
       <main>
         <PageBanner
           title={post.title}
-          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Blog Grid', href: '/blog' }, { label: 'Blog Details' }]}
+          breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Blog Grid', href: '/en/blog' }, { label: 'Blog Details' }]}
         />
 
         <section class="bistly-blog-details py-5">
@@ -81,7 +77,6 @@ const cookingMethodPairs = [
                           <p data-aos="fade-up" data-aos-duration="1000">{para}</p>
                         ))}
 
-                        <!-- Content row: iconic-boxes + image -->
                         <div class="row align-items-center justify-content-center">
                           <div class="col-lg-8">
                             <div class="content-box">
@@ -114,7 +109,6 @@ const cookingMethodPairs = [
                           </div>
                         </div>
 
-                        <!-- Cooking methods row -->
                         <div class="row align-items-center">
                           <div class="col-lg-4 order-lg-1 order-2">
                           <div class="bistly-image mb-5 text-center" data-aos="fade-up" data-aos-duration="2200">
@@ -144,7 +138,6 @@ const cookingMethodPairs = [
                           </div>
                         </div>
 
-                        <!-- Blockquote -->
                         <blockquote class="mb-5 mt-2" data-aos="fade-up" data-aos-duration="2600">
                           <div class="icon"><i class="flaticon-comma"></i></div>
                           <div class="content">
@@ -156,7 +149,6 @@ const cookingMethodPairs = [
                     </div>
                   </div>
 
-                  <!-- Comments area -->
                   <div class="comments-area mb-5" data-aos="fade-up" data-aos-duration="2800">
                     <h3 class="comments-title">Blog Comments (1)</h3>
                     <ul class="comments-list">
@@ -175,7 +167,6 @@ const cookingMethodPairs = [
                     </ul>
                   </div>
 
-                  <!-- Reply form -->
                   <div class="comments-form" data-aos="fade-up" data-aos-duration="3000">
                     <h3>Leave A Reply</h3>
                     <form action="#" class="contact-form" autocomplete="off">

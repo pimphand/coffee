@@ -8,7 +8,7 @@ import node      from '@astrojs/node';
 // query Postgres and sign HttpOnly session cookies. Static pages continue
 // to be pre-rendered at build time and served as fast .html files.
 export default defineConfig({
-  output: 'hybrid',
+  output: 'static',
   adapter: node({ mode: 'standalone' }),
 
   integrations: [
@@ -25,11 +25,10 @@ export default defineConfig({
     assets: 'assets'
   },
 
-  // Bilingual site — Indonesian default + /en/ English (carried over from
-  // earlier i18n work, retained in hybrid mode).
+  // Trilingual site — English default (/) + /id/ Indonesian + /cn/ Chinese.
   i18n: {
-    defaultLocale: 'id',
-    locales: ['id', 'en'],
+    defaultLocale: 'en',
+    locales: ['en', 'id', 'cn'],
     routing: { prefixDefaultLocale: false }
   }
 });

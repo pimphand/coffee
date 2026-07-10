@@ -1,0 +1,29 @@
+---
+// Admin Settings page (SSR). Manage active languages and site defaults.
+export const prerender = false;
+
+import Layout          from '../../layouts/Layout.astro';
+import AdminShell      from '../../components/admin/AdminShell.vue';
+import AdminSettings   from '../../components/admin/AdminSettings.vue';
+import { verifySession, readSessionCookie } from '../../lib/auth';
+import '@/styles/global.css';
+
+const cookieValue = readSessionCookie(Astro.request);
+const session     = cookieValue ? await verifySession(cookieValue) : null;
+
+if (!session) {
+  return Astro.redirect('/admin/login');
+}
+
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title="Settings — Brew Haven Admin" description="Manage site settings and language configuration.">
+  <AdminShell
+    client:only="vue"
+    user-email={session.email}
+    current-path={currentPath}
+  >
+    <AdminSettings client:only="vue" />
+  </AdminShell>
+</Layout>

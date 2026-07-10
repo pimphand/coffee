@@ -14,14 +14,14 @@
     "migrate": "bun scripts/migrate.js"
   },
   "dependencies": {
-    "@astrojs/node": "^8.3.4",
-    "@astrojs/tailwind": "^5.1.4",
-    "@astrojs/vue": "^4.5.3",
+    "@astrojs/node": "11.0.2",
+    "@astrojs/tailwind": "6.0.2",
+    "@astrojs/vue": "7.0.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/pg": "^8.11.10",
     "@vee-validate/zod": "^4.15.1",
     "@vueuse/core": "^14.3.0",
-    "astro": "^4.16.18",
+    "astro": "7.0.7",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -29,11 +29,16 @@
     "lucide-vue-next": "^0.460.0",
     "pg": "^8.13.1",
     "reka-ui": "^2.10.1",
+    "sharp": "^0.35.3",
     "tailwind-merge": "^2.5.5",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.13",
     "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^7.0.2"
   }
 }

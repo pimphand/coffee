@@ -1,0 +1,41 @@
+---
+export const prerender = false;
+
+import Layout     from '../../../layouts/Layout.astro';
+import Preloader  from '../../../components/Preloader.astro';
+import Header     from '../../../components/Header.astro';
+import Footer     from '../../../components/Footer.astro';
+import PageBanner from '../../../components/PageBanner.astro';
+import { posts as fallbackPosts } from '../../../data/posts';
+import { BlogPosts } from '../../../lib/db';
+import { localizeBlogPost, type LocalizedBlogPost } from '../../../i18n/utils';
+
+const { slug } = Astro.params;
+const locale = Astro.currentLocale ?? 'en';
+if (!slug) return Astro.redirect('/cn/blog');
+
+const dbRows = await BlogPosts.bySlug(slug);
+const dbPost = dbRows[0] ?? null;
+const fallback = fallbackPosts.find((p) => p.slug === slug);
+
+const post: LocalizedBlogPost | null = dbPost
+  ? localizeBlogPost(dbPost, locale)
+  : fallback
+    ? localizeBlogPost(fallback, locale)
+    : null;
+
+if (!post) return Astro.redirect('/cn/blog');
+---
+<Layout title={`${post.title} - Brew Haven`} description={post.excerpt} pageStyle="inner">
+  <Preloader /><Header />
+  <div id="smooth-wrapper"><div id="smooth-content"><main>
+    <PageBanner title={post.title} breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Blog Grid', href: '/cn/blog' }, { label: 'Blog Details' }]} />
+    <section class="bistly-blog-details py-5"><div class="container"><div class="blog-details-wrapper py-5"><div class="row py-xl-4"><div class="col-lg-12"><div class="blog-post-main pb-5"><div class="blog-post"><div class="content">
+      <div class="post-meta mb-4" data-aos="fade-down" data-aos-duration="600"><span><i class="far fa-user"></i>By {post.author}</span><span><i class="far fa-calendar-alt"></i>{post.date}</span></div>
+      <h4 class="title text-anm">{post.title}</h4>
+      <div class="author-meta" data-aos="fade-up" data-aos-duration="700"><img src="/assets/images/home-coffee/team/team-img1.webp" alt="author"><span>Posted By <a href="#">Devid Liam</a></span></div>
+      <figure data-aos="fade-up" data-aos-duration="900"><img src={post.image} alt={post.title}></figure>
+      {post.body.map((para) => (<p data-aos="fade-up" data-aos-duration="1000">{para}</p>))}
+    </div></div></div></div></div></div></div></section>
+  </main><Footer /></div></div>
+</Layout>

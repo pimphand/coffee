@@ -1,0 +1,50 @@
+---
+import Layout      from '../../layouts/Layout.astro';
+import Preloader   from '../../components/Preloader.astro';
+import Header      from '../../components/Header.astro';
+import Footer      from '../../components/Footer.astro';
+import PageBanner  from '../../components/PageBanner.astro';
+
+const section1 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb1.webp',  title: 'Garlic Herb Bruschetta',   desc: 'Toasted bread topped with garlic, fresh herbs.',          price: '$36.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb3.webp',  title: 'Pan-Seared Salmon',       desc: 'Atlantic salmon with lemon butter and greens.',           price: '$52.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb5.webp',  title: 'Spicy Chicken Wings',     desc: 'Crispy wings with chili glaze and cooling dip.',          price: '$62.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb2.webp',  title: 'Creamy Mushroom Pasta',   desc: 'Pappardelle in wild-mushroom cream with truffle.',         price: '$61.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb4.webp',  title: 'Classic Beef Burger',     desc: 'Angus patty, aged cheddar, brioche bun, fries.',          price: '$53.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb6.webp',  title: 'Grilled Herb Chicken',    desc: 'Marinated chicken breast with rosemary and thyme.',       price: '$34.00' }
+];
+const section2 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb7.webp',  title: 'Classic Club Sandwich',    desc: 'Triple-decker with turkey, bacon, lettuce.',              price: '$65.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb9.webp',  title: 'Spicy Chicken Rice Bowl',  desc: 'Spicy chicken over jasmine rice with vegetables.',        price: '$43.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb11.webp', title: 'Thai Basil Chicken',       desc: 'Stir-fried chicken with Thai basil and chili.',           price: '$58.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb8.webp',  title: 'Margherita Flatbread',     desc: 'Flatbread with mozzarella, basil, tomato.',               price: '$39.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb10.webp', title: 'Mediterranean Quinoa',     desc: 'Quinoa with cucumbers, olives, feta, lemon.',             price: '$49.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb12.webp', title: 'Lemon Herb Grilled Fish',  desc: 'Lightly grilled fish with lemon and herbs.',              price: '$47.00' }
+];
+const section3 = [
+  { img: '/assets/images/innerpage/menu/menu-thumb13.webp', title: 'Creamy Tuscan Shrimp',     desc: 'Shrimp in garlic cream with spinach and sundried tomato.',price: '$63.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb15.webp', title: 'Slow-Cooked Lamb Shank',   desc: 'Tender lamb braised with herbs and warm spices.',          price: '$61.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb17.webp', title: 'Chargrilled Vegetables',    desc: 'Seasonal vegetables with herbs and smoked sea salt.',     price: '$48.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb14.webp', title: 'Tandoori Chicken Rice',    desc: 'Tandoori chicken over jeera rice with mint yogurt.',       price: '$76.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb16.webp', title: 'Green Curry Jasmine',      desc: 'Thai green curry with vegetables and coconut milk.',      price: '$46.00' },
+  { img: '/assets/images/innerpage/menu/menu-thumb18.webp', title: 'Barbecue Glazed Chicken',  desc: 'Grilled chicken with smoky-sweet house barbecue glaze.',  price: '$55.00' }
+];
+const sections = [
+  { eyebrow: 'Our Food Menu', headline: 'Exclusive Hourly Specials', items: section1 },
+  { eyebrow: 'Lunch',          headline: 'Taste the Afternoon',       items: section2 },
+  { eyebrow: 'Dinner',         headline: 'Evening Indulgence',        items: section3 }
+];
+---
+<Layout title="Menu List - Brew Haven" description="Browse our lunch and dinner offerings" pageStyle="inner">
+  <Preloader /><Header />
+  <div id="smooth-wrapper"><div id="smooth-content"><main>
+    <PageBanner title="Menu List" breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Menu List' }]} />
+    {sections.map((sec, secIdx) => (<section class={`bistly-menu-list ${secIdx === 1 ? '' : 'py-5'}`}><div class="container">
+      <div class={`row justify-content-center ${secIdx === 1 ? 'py-5' : ''}`}><div class="col-lg-8"><div class="section-title text-center mt-3"><span class="sub-title" data-aos="fade-down" data-aos-duration="1000">{sec.eyebrow}</span><h2 class="text-anm">{sec.headline}</h2></div></div></div>
+      <div class={`row justify-content-center ${secIdx !== 1 ? 'pb-5' : ''}`}>
+        <div class="col-xl-6 col-md-8"><div class="menu-list-wrap pe-xl-4">{sec.items.slice(0, 3).map((item, idx) => (<div class="bistly-menu-list-item mb-4" data-aos="fade-up" data-aos-duration={800 + (secIdx * 3 + idx) * 200}><div class="thumbnail"><img src={item.img} alt={item.title} loading="lazy"></div><div class="content"><h4><a href="#">{item.title}</a><span class="price">{item.price}</span></h4><p>{item.desc}</p><div class="ratings"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div></div>))}</div></div>
+        <div class="col-xl-6 col-md-8"><div class="menu-list-wrap ps-xl-4">{sec.items.slice(3, 6).map((item, idx) => (<div class="bistly-menu-list-item mb-4" data-aos="fade-up" data-aos-duration={800 + (secIdx * 3 + idx) * 200}><div class="thumbnail"><img src={item.img} alt={item.title} loading="lazy"></div><div class="content"><h4><a href="#">{item.title}</a><span class="price">{item.price}</span></h4><p>{item.desc}</p><div class="ratings"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div></div></div>))}</div></div>
+      </div>
+    </div></section>))}
+  </main><Footer /></div></div>
+</Layout>

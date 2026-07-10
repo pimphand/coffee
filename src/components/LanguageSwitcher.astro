@@ -1,15 +1,9 @@
 ---
-// Tiny language switcher — sits inline in Header/future nav-right slot.
-// Renders ONE link per locale other than the current one. Clicking it
-// navigates to the SAME page in the OTHER locale, preserving both
-// pathname and any query/fragment via Astro.url.pathname.
-//
-// Design choice: show the destination locale, not the current one.
-// (e.g. on an Indonesian page, the link says "EN" so the user knows
-// what they'll get after clicking.)
+// Language switcher — renders links for all locales other than the
+// current one. Supports en (default), id, and cn.
 import { supportedLocales, defaultLang, getLocalizedPath } from '../i18n/utils';
 
-const currentLocale = (Astro.currentLocale ?? defaultLang) as 'id' | 'en';
+const currentLocale = (Astro.currentLocale ?? defaultLang) as 'en' | 'id' | 'cn';
 const others = supportedLocales.filter((l) => l !== currentLocale);
 const currentPath = Astro.url.pathname;
 ---
@@ -20,9 +14,9 @@ const currentPath = Astro.url.pathname;
       href={getLocalizedPath(currentPath, l)}
       class="lang-link"
       data-lang={l}
-      aria-label={`Switch language to ${l.toUpperCase()}`}
+      aria-label={`Switch language to ${l === 'cn' ? 'Chinese' : l.toUpperCase()}`}
     >
-      {l.toUpperCase()}
+      {l === 'cn' ? '中文' : l.toUpperCase()}
     </a>
   ))}
 </div>

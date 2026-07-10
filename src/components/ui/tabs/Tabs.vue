@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import type { TabsRootEmits, TabsRootProps } from "reka-ui"
 import { TabsRoot, useForwardPropsEmits } from "reka-ui"
 
-const props = defineProps<TabsRootProps>()
-const emits = defineEmits<TabsRootEmits>()
+const props = defineProps<{
+  defaultValue?: string
+  modelValue?: string
+  orientation?: "horizontal" | "vertical"
+  dir?: "ltr" | "rtl"
+  activationMode?: "automatic" | "manual"
+  as?: string
+  asChild?: boolean
+}>()
+const emits = defineEmits<{
+  "update:modelValue": [value: string]
+}>()
 
 const forwarded = useForwardPropsEmits(props, emits)
 </script>

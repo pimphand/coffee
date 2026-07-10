@@ -5,7 +5,7 @@
 // src/data/posts.ts (used while the DB hasn't been seeded yet).
 import { Pool, type PoolClient } from 'pg';
 
-// ── Row types (mirror db/migrations/001_initial.sql) ─────────────
+// ── Row types (mirror db/migrations/001_initial.sql + 002_settings.sql) ─
 export interface CoffeeUser {
   id:            string;
   email:         string;
@@ -50,18 +50,28 @@ export interface CoffeeChef {
 export interface CoffeeBlogPost {
   id:            string;
   slug:          string;
-  title_en:      string;
-  title_id:      string;
+  title_en:      string | null;
+  title_id:      string | null;
+  title_cn:      string | null;
   excerpt_en:    string;
   excerpt_id:    string;
+  excerpt_cn:    string;
   content_en:    string;
   content_id:    string;
+  content_cn:    string;
   image:         string;
   author_name:   string;
   published_at:  string;
   is_published:  boolean;
   created_at:    string;
   updated_at:    string;
+}
+
+export interface CoffeeSettings {
+  id:               number;
+  default_language: 'en' | 'id' | 'cn';
+  active_languages: string[];
+  updated_at:       string;
 }
 
 // ── Pool (lazy) ───────────────────────────────────────────────────
@@ -111,6 +121,9 @@ export const BlogPosts     = {
   list:    (limit = 100) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE is_published = true  ORDER BY published_at DESC LIMIT $1`, [limit]),
   listAll: (limit = 500) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts ORDER BY created_at DESC LIMIT $1`, [limit]),
   bySlug:  (s: string)   => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE slug = $1 LIMIT 1`, [s])
+};
+export const Settings      = {
+  get:   () => query<CoffeeSettings>(`SELECT * FROM coffee_settings WHERE id = 1 LIMIT 1`).then(r => r[0] ?? null)
 };
 export const Users         = {
   byEmail: (email: string) => query<CoffeeUser>(`SELECT * FROM coffee_users WHERE email = $1 LIMIT 1`, [email])
