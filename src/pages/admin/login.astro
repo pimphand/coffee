@@ -1,0 +1,14 @@
+---
+// Admin login page — no auth required to reach. Renders LoginForm.vue
+// client:only="vue" so it never SSRs the form (avoids leaking any
+// default credentials into static markup) and picks up the Tailwind
+// tokens from theme.css.
+
+import Layout           from '../../layouts/Layout.astro';
+import AdminLoginForm   from '../../components/admin/login.vue';
+import "@/styles/global.css"
+---
+
+<Layout title="Admin Login — Brew Haven" description="Sign in to manage the Brew Haven site.">
+  <AdminLoginForm client:only="vue" />
+</Layout>

@@ -19,7 +19,7 @@ export const posts: BlogPost[] = [
     slug: 'local-beans-global-dreams',
     title: 'Local Beans, Global Dreams',
     excerpt: 'Why sourcing our coffee from ethical farms around the world makes a difference every day.',
-    image: '/assets/images/home-coffee/blog/blog-img1.jpg',          // roasted coffee beans
+    image: '/assets/images/home-coffee/blog/blog-img1.webp',          // roasted coffee beans
     author: 'John',
     date: 'May 19, 2025',
     body: [
@@ -31,7 +31,7 @@ export const posts: BlogPost[] = [
     slug: 'a-day-in-the-life-of-our-head-chef',
     title: 'A Day in the Life of Our Head Barista',
     excerpt: 'From bean selection to the final pour, follow our head barista through a single Brew Haven shift.',
-    image: '/assets/images/home-coffee/about/about-img1.jpg',        // barista latte art
+    image: '/assets/images/home-coffee/about/about-img1.webp',        // barista latte art
     author: 'John',
     date: 'May 19, 2025',
     body: [
@@ -43,7 +43,7 @@ export const posts: BlogPost[] = [
     slug: 'mediterranean-influence',
     title: 'The Mediterranean Influence Behind Our New Coffee Creations',
     excerpt: 'Bright herbs, citrus zest, and single-origin espresso — meet Brew Haven\'s new lineup.',
-    image: '/assets/images/home-coffee/gallery/enjoy-img2.png',      // cappuccino with latte art
+    image: '/assets/images/home-coffee/gallery/enjoy-img2.webp',      // cappuccino with latte art
     author: 'John',
     date: 'May 19, 2025',
     body: [
@@ -55,7 +55,7 @@ export const posts: BlogPost[] = [
     slug: 'farm-to-table',
     title: 'From Farm to Cup: Where Our Beans Come From',
     excerpt: 'Every bean we serve can be traced back to a farm we have visited ourselves.',
-    image: '/assets/images/home-coffee/blog/blog-img2.jpg',          // small cup of coffee
+    image: '/assets/images/home-coffee/blog/blog-img2.webp',          // small cup of coffee
     author: 'John',
     date: 'May 19, 2025',
     body: [
@@ -67,7 +67,7 @@ export const posts: BlogPost[] = [
     slug: 'seasonal-specials',
     title: "Seasonal Specials: What's Pouring This Month",
     excerpt: 'Bright florals and refreshing fruit notes — discover May\'s rotating specials at Brew Haven.',
-    image: '/assets/images/home-coffee/gallery/cup.png',             // rose latte art
+    image: '/assets/images/home-coffee/gallery/cup.webp',             // rose latte art
     author: 'John',
     date: 'May 19, 2025',
     body: [
@@ -79,7 +79,7 @@ export const posts: BlogPost[] = [
     slug: 'celebrating-with-us',
     title: 'Celebrating With Us: Hosting Events at Brew Haven',
     excerpt: 'From intimate birthdays to corporate gatherings — let Brew Haven host your next event.',
-    image: '/assets/images/home-coffee/gallery/enjoy-img1.png',      // craft coffee art
+    image: '/assets/images/home-coffee/gallery/enjoy-img1.webp',      // craft coffee art
     author: 'John',
     date: 'May 19, 2025',
     body: [

@@ -1,0 +1,76 @@
+---
+// Admin dashboard landing page (SSR). Verifies the bearer cookie
+// BEFORE rendering and 302s to /admin/login when missing. Renders the
+// AdminShell Vue island with a per-entity overview in the slot.
+export const prerender = false;
+
+import Layout          from '../../layouts/Layout.astro';
+import AdminShell      from '../../components/admin/AdminShell.vue';
+import { verifySession, readSessionCookie } from '../../lib/auth';
+import { MenuItems, Chefs, BlogPosts } from '../../lib/db';
+import "@/styles/global.css";
+
+const cookieValue = readSessionCookie(Astro.request);
+const session     = cookieValue ? await verifySession(cookieValue) : null;
+
+if (!session) {
+  return Astro.redirect('/admin/login');
+}
+
+// Surface row counts so the dashboard has at-a-glance content state.
+// Any of these throwing would 500 the page — keep the queries wrapped
+// and degrade gracefully if the DB is unreachable.
+
+async function safeCount(fn: () => Promise<{ length: number }>) {
+  try { const rows = await fn(); return rows.length; } catch { return null; }
+}
+
+const [menuCount, chefCount, blogCount] = await Promise.all([
+  safeCount(() => MenuItems.list()),
+  safeCount(() => Chefs.list()),
+  safeCount(() => BlogPosts.list()),
+]);
+
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title="Dashboard — Brew Haven Admin" description="Manage menu items, chefs, blog posts.">
+  <AdminShell
+    client:only="vue"
+    user-email={session.email}
+    current-path={currentPath}
+  >
+    <div class="mx-auto max-w-5xl space-y-6">
+      <header class="space-y-1">
+        <h1 class="text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <p class="text-muted-foreground">
+          Welcome back, <span class="font-medium text-foreground">{session.email}</span>.
+        </p>
+      </header>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-lg border bg-card p-5 shadow-sm">
+          <p class="text-sm text-muted-foreground">Menu items</p>
+          <p class="mt-2 text-3xl font-semibold">{menuCount ?? '—'}</p>
+        </div>
+        <div class="rounded-lg border bg-card p-5 shadow-sm">
+          <p class="text-sm text-muted-foreground">Chefs</p>
+          <p class="mt-2 text-3xl font-semibold">{chefCount ?? '—'}</p>
+        </div>
+        <div class="rounded-lg border bg-card p-5 shadow-sm">
+          <p class="text-sm text-muted-foreground">Blog posts</p>
+          <p class="mt-2 text-3xl font-semibold">{blogCount ?? '—'}</p>
+        </div>
+      </div>
+
+      <section class="rounded-lg border bg-card p-5 shadow-sm">
+        <h2 class="text-lg font-semibold">Next steps</h2>
+        <ul class="mt-3 list-disc space-y-1 pl-6 text-sm text-muted-foreground">
+          <li>Per-entity editors (menu / chefs / blog) land on <a href="/admin/menu" class="text-primary underline-offset-4 hover:underline">/admin/menu</a> and siblings.</li>
+          <li>Public pages switch from hardcoded copy to dynamic reads against <code>coffee_*</code> tables.</li>
+          <li>Reservation intake writes to <code>coffee_reservations</code>.</li>
+        </ul>
+      </section>
+    </div>
+  </AdminShell>
+</Layout>
