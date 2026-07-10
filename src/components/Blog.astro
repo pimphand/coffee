@@ -1,28 +1,24 @@
 ---
-// Latest 3 blog posts preview.
-const posts = [
-  {
-    img: '/assets/images/home-coffee/blog/blog-img1.webp',
-    title: 'Local Beans, Global Dreams',
-    excerpt: 'Why sourcing our coffee from ethical farms around the world makes a difference every day.',
-    author: 'By John',
-    date: 'May 19, 2025'
-  },
-  {
-    img: '/assets/images/home-coffee/blog/blog-img2.webp',
-    title: 'Your Daily Ritual, Elevated',
-    excerpt: 'How our cozy space and curated brews turn your coffee break into a daily ritual.',
-    author: 'By John',
-    date: 'May 19, 2025'
-  },
-  {
-    img: '/assets/images/home-coffee/blog/blog-img3.webp',
-    title: 'The Art Behind Every Cup',
-    excerpt: "Discover how we craft each coffee with care, from bean selection to the final pour.",
-    author: 'By John',
-    date: 'May 19, 2025'
-  }
-];
+// Latest 3 blog posts preview — fetched from DB with fallback.
+import { BlogPosts } from '../lib/db';
+import { posts as fallbackPosts } from '../data/posts';
+
+const dbPosts = await BlogPosts.list(3);
+const posts = dbPosts.length > 0
+  ? dbPosts.map((p) => ({
+      img: p.image,
+      title: p.title_en,
+      excerpt: p.excerpt_en,
+      author: `By ${p.author_name}`,
+      date: new Date(p.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    }))
+  : fallbackPosts.slice(0, 3).map((p) => ({
+      img: p.image,
+      title: p.title,
+      excerpt: p.excerpt,
+      author: `By ${p.author}`,
+      date: p.date,
+    }));
 ---
 <section class="cs-blog-sec py-5" id="blog">
   <div class="container">

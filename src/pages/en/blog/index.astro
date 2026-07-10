@@ -5,7 +5,20 @@ import Header           from '../../../components/Header.astro';
 import Footer           from '../../../components/Footer.astro';
 import PageBanner       from '../../../components/PageBanner.astro';
 import InstagramSlider  from '../../../components/InstagramSlider.astro';
-import { posts }        from '../../../data/posts';
+import { posts as fallbackPosts } from '../../../data/posts';
+import { BlogPosts }    from '../../../lib/db';
+
+const dbPosts = await BlogPosts.list();
+const posts = dbPosts.length > 0
+  ? dbPosts.map((p) => ({
+      slug: p.slug,
+      title: p.title_en,
+      excerpt: p.excerpt_en,
+      image: p.image,
+      author: p.author_name,
+      date: new Date(p.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    }))
+  : fallbackPosts;
 ---
 <Layout title="Blog - Brew Haven" description="Latest blog posts from Brew Haven" pageStyle="inner">
   <Preloader />

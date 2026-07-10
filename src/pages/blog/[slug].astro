@@ -1,20 +1,37 @@
 ---
+// Blog detail page (SSR). Fetches the post from the DB by slug;
+// falls back to the hardcoded posts.ts array when the DB is offline.
+export const prerender = false;
+
 import Layout     from '../../layouts/Layout.astro';
 import Preloader  from '../../components/Preloader.astro';
 import Header     from '../../components/Header.astro';
 import Footer     from '../../components/Footer.astro';
 import PageBanner from '../../components/PageBanner.astro';
-import { posts, type BlogPost } from '../../data/posts';
+import { posts as fallbackPosts, type BlogPost } from '../../data/posts';
+import { BlogPosts } from '../../lib/db';
 
-export function getStaticPaths() {
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props:  { post }
-  }));
-}
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/blog');
 
-interface Props { post: BlogPost }
-const { post } = Astro.props;
+// DB first, fallback to hardcoded data
+const dbRows = await BlogPosts.bySlug(slug);
+const dbPost = dbRows[0] ?? null;
+const fallback = fallbackPosts.find((p) => p.slug === slug);
+
+const post: BlogPost | null = dbPost
+  ? {
+      slug: dbPost.slug,
+      title: dbPost.title_en,
+      excerpt: dbPost.excerpt_en,
+      image: dbPost.image,
+      author: dbPost.author_name,
+      date: new Date(dbPost.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      body: dbPost.content_en ? dbPost.content_en.split(/\n\n+/).filter(Boolean) : [],
+    }
+  : fallback ?? null;
+
+if (!post) return Astro.redirect('/blog');
 
 // Iconic-box checklist mid-content (matches blog-details.html)
 const checklist = [

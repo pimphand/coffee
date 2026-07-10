@@ -1,0 +1,39 @@
+---
+// Admin blog management (SSR). Lists all posts, supports create/edit/
+// delete/toggle-publish via /api/admin/blog CRUD.
+export const prerender = false;
+
+import Layout          from '../../layouts/Layout.astro';
+import AdminShell      from '../../components/admin/AdminShell.vue';
+import AdminBlogManager from '../../components/admin/AdminBlogManager.vue';
+import { verifySession, readSessionCookie } from '../../lib/auth';
+import { BlogPosts } from '../../lib/db';
+import "@/styles/global.css";
+
+const cookieValue = readSessionCookie(Astro.request);
+const session     = cookieValue ? await verifySession(cookieValue) : null;
+if (!session) return Astro.redirect('/admin/login');
+
+// Hydrate the server-rendered list so the Vue island starts with data.
+// listAll returns published + draft; gracefully degrade if DB is offline.
+let posts: any[] = [];
+try { posts = await BlogPosts.listAll(); } catch { /* fall through */ }
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title="Blog Posts — Brew Haven Admin" description="Manage blog posts.">
+  <AdminShell
+    client:only="vue"
+    user-email={session.email}
+    current-path={currentPath}
+  >
+    <header class="mb-6 space-y-1">
+      <h1 class="text-3xl font-semibold tracking-tight">Blog Posts</h1>
+      <p class="text-muted-foreground">
+        {posts.length} post{posts.length !== 1 ? 's' : ''} — create, edit, or unpublish.
+      </p>
+    </header>
+
+    <AdminBlogManager client:only="vue" server-posts={JSON.stringify(posts)} />
+  </AdminShell>
+</Layout>

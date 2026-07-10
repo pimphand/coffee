@@ -108,8 +108,9 @@ export const Chefs         = {
   list:   () => query<CoffeeChef>(`SELECT * FROM coffee_chefs WHERE is_published = true ORDER BY position, created_at`)
 };
 export const BlogPosts     = {
-  list:   (limit = 100) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE is_published = true ORDER BY published_at DESC LIMIT $1`, [limit]),
-  bySlug: (s: string) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE slug = $1 LIMIT 1`, [s])
+  list:    (limit = 100) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE is_published = true  ORDER BY published_at DESC LIMIT $1`, [limit]),
+  listAll: (limit = 500) => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts ORDER BY created_at DESC LIMIT $1`, [limit]),
+  bySlug:  (s: string)   => query<CoffeeBlogPost>(`SELECT * FROM coffee_blog_posts WHERE slug = $1 LIMIT 1`, [s])
 };
 export const Users         = {
   byEmail: (email: string) => query<CoffeeUser>(`SELECT * FROM coffee_users WHERE email = $1 LIMIT 1`, [email])
