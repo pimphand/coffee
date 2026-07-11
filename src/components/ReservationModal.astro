@@ -103,6 +103,38 @@ const t = useTranslations(Astro.currentLocale);
     color: #fff;
   }
 
+  /* PWA Install buttons */
+  .pwa-install-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pwa-install-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+  .pwa-install-btn--primary {
+    background: #c8a97e;
+    color: #161616;
+    border-color: #c8a97e;
+  }
+  .pwa-install-btn--primary:hover {
+    background: #d4b68c;
+    border-color: #d4b68c;
+    color: #0d0d0d;
+  }
+
   /* Reservation success view */
   .reservation-success .success-icon {
     font-size: 68px;
@@ -208,6 +240,25 @@ const t = useTranslations(Astro.currentLocale);
           <div class="booking-ref" id="bookingRef"></div>
           <button type="button" class="theme-btn style-two border-0 mt-2" data-bs-dismiss="modal">{t('modal.successDone')}</button>
         </div>
+
+        <!-- PWA Install buttons (hidden until beforeinstallprompt fires) -->
+        <div id="pwaInstallRow" class="d-none mt-4 pt-3" style="border-top: 1px solid rgba(255,255,255,0.08);">
+          <p style="color: rgba(255,255,255,0.55); font-size: 12px; margin-bottom: 10px; text-align: center; letter-spacing: 0.3px;">
+            {t('pwa.tagline')}
+          </p>
+          <div class="row g-2">
+            <div class="col-6">
+              <button type="button" id="btnAddToHome" class="pwa-install-btn w-100">
+                <i class="fas fa-plus-square me-2"></i> {t('pwa.addToHome')}
+              </button>
+            </div>
+            <div class="col-6">
+              <button type="button" id="btnInstallApp" class="pwa-install-btn pwa-install-btn--primary w-100">
+                <i class="fas fa-download me-2"></i> {t('pwa.installApp')}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -222,11 +273,14 @@ const t = useTranslations(Astro.currentLocale);
    *  - works without jQuery (vanilla JS only)
    */
   (function () {
-    var form    = document.getElementById('reservationForm');
-    var success = document.getElementById('reservationSuccess');
-    var refEl   = document.getElementById('bookingRef');
-    var dateEl  = document.getElementById('resDate');
-    var modal   = document.getElementById('reservationModal');
+    var form       = document.getElementById('reservationForm');
+    var success    = document.getElementById('reservationSuccess');
+    var refEl      = document.getElementById('bookingRef');
+    var dateEl     = document.getElementById('resDate');
+    var modal      = document.getElementById('reservationModal');
+    var pwaRow     = document.getElementById('pwaInstallRow');
+    var btnHome    = document.getElementById('btnAddToHome');
+    var btnInstall = document.getElementById('btnInstallApp');
     if (!form || !success || !refEl || !dateEl || !modal) return;
 
     // Min date = today (local timezone, ISO yyyy-mm-dd)
@@ -253,5 +307,33 @@ const t = useTranslations(Astro.currentLocale);
       form.classList.remove('d-none');
       success.classList.add('d-none');
     });
+
+    // ── PWA Install ──────────────────────────────────────────────
+    var deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (pwaRow) pwaRow.classList.remove('d-none');
+    });
+
+    function triggerInstall() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function (result) {
+        if (result.outcome === 'accepted') {
+          if (pwaRow) pwaRow.classList.add('d-none');
+        }
+        deferredPrompt = null;
+      });
+    }
+
+    if (btnHome)    btnHome.addEventListener('click', triggerInstall);
+    if (btnInstall) btnInstall.addEventListener('click', triggerInstall);
+
+    // Hide PWA row if app already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      if (pwaRow) pwaRow.classList.add('d-none');
+    }
   })();
 </script>

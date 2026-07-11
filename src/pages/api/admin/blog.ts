@@ -1,37 +1,21 @@
-// /api/admin/blog — Blog CRUD. All methods require a valid session cookie.
-//
-//   GET    /api/admin/blog              → list all posts (published + draft)
-//   POST   /api/admin/blog              → create  { slug, title_en, title_id, ... }
-//   PUT    /api/admin/blog              → update  { id, slug, title_en, ... }
-//   DELETE /api/admin/blog?id=xxx       → delete
-//   PATCH  /api/admin/blog?id=xxx       → toggle is_published
-//
-// Auth is enforced via the same `verifySession` / `readSessionCookie`
-// helpers as /api/admin/login and the admin dashboard.
+// /api/admin/blog — Blog CRUD with Drizzle ORM.
+export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { verifySession, readSessionCookie } from '../../../lib/auth';
-import { query } from '../../../lib/db';
+import { BlogPosts } from '../../../lib/db';
 
-export const prerender = false;
-
-// ── Auth guard ────────────────────────────────────────────────────
 async function auth(request: Request) {
   const raw = readSessionCookie(request);
   if (!raw) return null;
   return verifySession(raw);
 }
 
-// ── Handlers ──────────────────────────────────────────────────────
-
 export const GET: APIRoute = async ({ request }) => {
   const user = await auth(request);
   if (!user) return json({ error: 'Unauthorized' }, 401);
-
-  const rows = await query<any>(
-    `SELECT * FROM coffee_blog_posts ORDER BY created_at DESC`
-  );
-  return json({ posts: rows }, 200);
+  const posts = await BlogPosts.listAll();
+  return json({ posts }, 200);
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -47,12 +31,21 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const rows = await query<any>(
-      `INSERT INTO coffee_blog_posts (slug, title_en, title_id, title_cn, excerpt_en, excerpt_id, excerpt_cn, content_en, content_id, content_cn, image, author_name)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
-      [slug, title_en || null, title_id || null, title_cn || null, excerpt_en || '', excerpt_id || '', excerpt_cn || '', content_en || '', content_id || '', content_cn || '', image || '', author_name || 'Brew Haven']
-    );
-    return json({ ok: true, post: rows[0] }, 201);
+    const post = await BlogPosts.create({
+      slug,
+      title_en: title_en || null,
+      title_id: title_id || null,
+      title_cn: title_cn || null,
+      excerpt_en: excerpt_en || '',
+      excerpt_id: excerpt_id || '',
+      excerpt_cn: excerpt_cn || '',
+      content_en: content_en || '',
+      content_id: content_id || '',
+      content_cn: content_cn || '',
+      image: image || '',
+      author_name: author_name || 'Brew Haven',
+    });
+    return json({ ok: true, post }, 201);
   } catch (e: any) {
     if (e?.code === '23505') return json({ error: 'Slug already exists' }, 409);
     throw e;
@@ -70,16 +63,22 @@ export const PUT: APIRoute = async ({ request }) => {
   if (!id) return json({ error: 'id is required' }, 400);
 
   try {
-    const rows = await query<any>(
-      `UPDATE coffee_blog_posts SET
-         slug=$1, title_en=$2, title_id=$3, title_cn=$4, excerpt_en=$5, excerpt_id=$6,
-         excerpt_cn=$7, content_en=$8, content_id=$9, content_cn=$10, image=$11, author_name=$12,
-         updated_at = now()
-       WHERE id=$13 RETURNING *`,
-      [slug, title_en || null, title_id || null, title_cn || null, excerpt_en || '', excerpt_id || '', excerpt_cn || '', content_en || '', content_id || '', content_cn || '', image || '', author_name || '', id]
-    );
-    if (rows.length === 0) return json({ error: 'Post not found' }, 404);
-    return json({ ok: true, post: rows[0] }, 200);
+    const post = await BlogPosts.update(id, {
+      slug,
+      title_en: title_en || null,
+      title_id: title_id || null,
+      title_cn: title_cn || null,
+      excerpt_en: excerpt_en || '',
+      excerpt_id: excerpt_id || '',
+      excerpt_cn: excerpt_cn || '',
+      content_en: content_en || '',
+      content_id: content_id || '',
+      content_cn: content_cn || '',
+      image: image || '',
+      author_name: author_name || '',
+    });
+    if (!post) return json({ error: 'Post not found' }, 404);
+    return json({ ok: true, post }, 200);
   } catch (e: any) {
     if (e?.code === '23505') return json({ error: 'Slug already exists' }, 409);
     throw e;
@@ -89,34 +88,24 @@ export const PUT: APIRoute = async ({ request }) => {
 export const DELETE: APIRoute = async ({ request }) => {
   const user = await auth(request);
   if (!user) return json({ error: 'Unauthorized' }, 401);
-
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
   if (!id) return json({ error: '?id= is required' }, 400);
-
-  await query(`DELETE FROM coffee_blog_posts WHERE id = $1`, [id]);
+  await BlogPosts.delete(id);
   return json({ ok: true }, 200);
 };
 
 export const PATCH: APIRoute = async ({ request }) => {
   const user = await auth(request);
   if (!user) return json({ error: 'Unauthorized' }, 401);
-
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
   if (!id) return json({ error: '?id= is required' }, 400);
-
-  const rows = await query<any>(
-    `UPDATE coffee_blog_posts
-       SET is_published = NOT is_published, updated_at = now()
-     WHERE id = $1 RETURNING *`,
-    [id]
-  );
-  if (rows.length === 0) return json({ error: 'Post not found' }, 404);
-  return json({ ok: true, post: rows[0] }, 200);
+  const post = await BlogPosts.togglePublish(id);
+  if (!post) return json({ error: 'Post not found' }, 404);
+  return json({ ok: true, post }, 200);
 };
 
-// ── Helpers ───────────────────────────────────────────────────────
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,

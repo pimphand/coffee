@@ -1,54 +1,31 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-import pg from "pg";
+// Drizzle migration runner — applies Drizzle Kit generated migrations.
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { Client } = pg;
+const url = process.env.SUPABASE_DATABASE_URL;
+if (!url) {
+  console.error('❌ SUPABASE_DATABASE_URL is required');
+  process.exit(1);
+}
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+async function main() {
+  const sql = postgres(url, { ssl: 'require', max: 1 });
+  const db = drizzle(sql);
 
-const migrationDir = path.join(__dirname, "../db/migrations");
-
-const client = new Client({
-  connectionString: process.env.SUPABASE_DATABASE_URL,
-  ssl: process.env.SUPABASE_DATABASE_URL.includes("supabase")
-    ? { rejectUnauthorized: false }
-    : false,
-});
-
-async function migrate() {
   try {
-    await client.connect();
-
-    const files = fs
-      .readdirSync(migrationDir)
-      .filter((f) => f.endsWith(".sql"))
-      .sort();
-
-    for (const file of files) {
-      console.log(`▶ Menjalankan ${file}`);
-
-      const sql = fs.readFileSync(
-        path.join(migrationDir, file),
-        "utf8"
-      );
-
-      await client.query(sql);
-
-      console.log(`✅ ${file} selesai`);
-    }
-
-    console.log("🎉 Semua migration berhasil.");
+    console.log('▶ Running Drizzle migrations...');
+    await migrate(db, { migrationsFolder: './db/drizzle' });
+    console.log('✅ All migrations applied.');
   } catch (err) {
-    console.error(err);
+    console.error('❌ Migration failed:', err);
     process.exit(1);
   } finally {
-    await client.end();
+    await sql.end();
   }
 }
 
-migrate();
+main();

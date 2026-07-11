@@ -70,6 +70,11 @@ export const ui: UISchema = {
     'footer.dayShort.sunday': 'Sunday:',
     'footer.dayShort.off':    'Off Day',
 
+    // PWA install
+    'pwa.tagline':         'GET THE FULL EXPERIENCE',
+    'pwa.addToHome':       'Add to Home Screen',
+    'pwa.installApp':      'Install App',
+
     // Page-level headlines
     'page.menuGridSubtitle':  'Our Coffee Menu',
     'page.menuGridTitle':     'Choose Your Coffee',
@@ -126,6 +131,11 @@ export const ui: UISchema = {
     'footer.dayShort.friSat': 'Jum - Sab:',
     'footer.dayShort.sunday': 'Minggu:',
     'footer.dayShort.off':    'Libur',
+
+    // PWA install
+    'pwa.tagline':         'DAPATKAN PENGALAMAN LENGKAP',
+    'pwa.addToHome':       'Tambah ke Layar Utama',
+    'pwa.installApp':      'Instal Aplikasi',
 
     'page.menuGridSubtitle':  'Menu Kopi Kami',
     'page.menuGridTitle':     'Pilih Kopi Anda',
@@ -187,6 +197,11 @@ export const ui: UISchema = {
     'footer.dayShort.friSat': 'Fri - Sat:',
     'footer.dayShort.sunday': 'Sunday:',
     'footer.dayShort.off':    'Off Day',
+
+    // PWA install
+    'pwa.tagline':         'GET THE FULL EXPERIENCE',
+    'pwa.addToHome':       'Add to Home Screen',
+    'pwa.installApp':      'Install App',
 
     // Page-level headlines
     'page.menuGridSubtitle':  'Our Coffee Menu',

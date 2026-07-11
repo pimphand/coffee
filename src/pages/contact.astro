@@ -4,6 +4,11 @@ import Preloader   from '../components/Preloader.astro';
 import Header      from '../components/Header.astro';
 import Footer      from '../components/Footer.astro';
 import PageBanner  from '../components/PageBanner.astro';
+import { Settings } from '../lib/db';
+
+const settings = await Settings.get();
+const mapsSrc = settings?.google_maps_iframe
+  || 'https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d96777.16150026117!2d-74.00840582560909!3d40.71171357405996!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1706508986625!5m2!1sen!2sbd';
 
 // Time slot options for the reservation form. Original template had
 // "USA / UAE / France / UK" under the "Time" label which was clearly a
@@ -180,7 +185,7 @@ const personOptions = [1, 2, 3, 4, 5, 6];
         <section class="map-sec">
           <div class="map-box mt-5 pt-3" data-aos="fade-up" data-aos-duration="1200">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d96777.16150026117!2d-74.00840582560909!3d40.71171357405996!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1706508986625!5m2!1sen!2sbd"
+              src={mapsSrc}
               loading="lazy"
               title="Brew Haven location on Google Maps"
             ></iframe>

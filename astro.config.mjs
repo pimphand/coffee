@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import vue       from '@astrojs/vue';
 import tailwind  from '@astrojs/tailwind';
 import node      from '@astrojs/node';
+import fs        from 'node:fs';
 
 // Hybrid mode: marketing pages stay SSG (no `export const prerender = false`
 // on them), while /admin/* and /api/admin/* fall through to SSR so they can
@@ -12,7 +13,16 @@ export default defineConfig({
   adapter: node({ mode: 'standalone' }),
 
   integrations: [
-    vue(),
+    vue({
+      script: {
+        // Astro 7 + @vue/compiler-sfc needs explicit fs to resolve
+        // type-only imports (e.g. import type { SeparatorProps } from "reka-ui")
+        fs: {
+          fileExists: (file) => fs.existsSync(file),
+          readFile:    (file) => fs.readFileSync(file, 'utf-8'),
+        },
+      },
+    }),
     tailwind({ applyBaseStyles: false })  // we'll inject tailwind base ourselves
   ],
 

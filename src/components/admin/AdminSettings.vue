@@ -1,14 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+
+interface OpeningDay {
+  day: string;
+  hours: string;
+  close: boolean;
+}
 
 interface SettingsData {
   id: number;
   default_language: 'en' | 'id' | 'cn';
   active_languages: string[];
+  google_maps_iframe: string;
+  opening_time: OpeningDay[];
   updated_at: string;
 }
+
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const languages = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -19,6 +30,10 @@ const languages = [
 const settings = ref<SettingsData | null>(null);
 const defaultLang = ref('en');
 const activeLangs = ref<string[]>(['en', 'id', 'cn']);
+const mapsIframe = ref('');
+const openingDays = reactive<OpeningDay[]>(
+  DAYS.map((d) => ({ day: d, hours: '10:00AM - 07:00PM', close: false }))
+);
 const loading = ref(false);
 const saving = ref(false);
 const savingSuccess = ref(false);
@@ -29,12 +44,44 @@ function getLang(code: string) {
 }
 
 function toggleLang(code: string) {
-  if (code === defaultLang.value) return; // can't deactivate default
+  if (code === defaultLang.value) return;
   const idx = activeLangs.value.indexOf(code);
   if (idx >= 0) {
     activeLangs.value.splice(idx, 1);
   } else {
     activeLangs.value.push(code);
+  }
+}
+
+function toggleDayClose(idx: number) {
+  openingDays[idx].close = !openingDays[idx].close;
+  if (openingDays[idx].close) {
+    openingDays[idx].hours = 'Closed';
+  } else if (openingDays[idx].hours === 'Closed') {
+    openingDays[idx].hours = '10:00AM - 07:00PM';
+  }
+}
+
+// Extract src URL from a full <iframe> tag if the user pasted one,
+// otherwise return the raw value (assume it's already a plain URL).
+function cleanMapsUrl(val: string): string {
+  const match = val.match(/src="([^"]+)"/);
+  return match ? match[1] : val.trim();
+}
+
+// Auto-clean on blur — if user pasted full <iframe>, extract just src.
+function onMapsInput() {
+  mapsIframe.value = cleanMapsUrl(mapsIframe.value);
+}
+
+function applyOpeningTime(data: OpeningDay[]) {
+  // Merge saved data into the 7-day grid
+  for (let i = 0; i < DAYS.length; i++) {
+    const saved = data.find((d) => d.day === DAYS[i]);
+    if (saved) {
+      openingDays[i].hours = saved.hours;
+      openingDays[i].close = saved.close;
+    }
   }
 }
 
@@ -48,6 +95,10 @@ async function load() {
         settings.value = data;
         defaultLang.value = data.default_language;
         activeLangs.value = [...data.active_languages];
+        mapsIframe.value = data.google_maps_iframe || '';
+        if (Array.isArray(data.opening_time) && data.opening_time.length > 0) {
+          applyOpeningTime(data.opening_time);
+        }
       }
     }
   } catch (e: any) {
@@ -67,6 +118,12 @@ async function save() {
       body: JSON.stringify({
         default_language: defaultLang.value,
         active_languages: activeLangs.value,
+        google_maps_iframe: mapsIframe.value,
+        opening_time: openingDays.map((d) => ({
+          day: d.day,
+          hours: d.hours,
+          close: d.close,
+        })),
       }),
     });
     const data = await res.json();
@@ -92,7 +149,7 @@ onMounted(load);
     <header class="mb-8 space-y-1">
       <h1 class="text-2xl font-semibold tracking-tight">Site Settings</h1>
       <p class="text-sm text-muted-foreground">
-        Manage active languages and site-wide configuration. Changes take effect after next build.
+        Manage languages, opening hours, and site-wide configuration.
       </p>
     </header>
 
@@ -139,17 +196,52 @@ onMounted(load);
             <span v-if="l.code === defaultLang" class="ml-1 text-[10px] opacity-70">(default)</span>
           </button>
         </div>
+      </section>      <!-- Google Maps iframe -->
+      <section class="rounded-lg border bg-card p-5 shadow-sm">
+        <h2 class="mb-3 text-sm font-semibold">Google Maps Embed</h2>
+        <p class="mb-4 text-xs text-muted-foreground">
+          Paste the full Google Maps embed code (the <code>&lt;iframe&gt;</code> tag)
+          or just the <code>src</code> URL. The preview will show immediately.
+        </p>
+        <div class="space-y-2">
+          <Label for="mapsIframe">Embed code or src URL</Label>
+          <textarea
+            id="mapsIframe"
+            v-model="mapsIframe"
+            @blur="onMapsInput()"
+            rows="3"
+            class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-y"
+            placeholder="Paste the full <iframe src=&quot;...&quot; ...></iframe> code here"
+          ></textarea>
+        </div>
+        <!-- Preview -->
+        <div v-if="mapsIframe" class="mt-4 rounded-lg overflow-hidden border border-border">
+          <iframe :src="mapsIframe" width="100%" height="200" style="border:0;" loading="lazy"
+            title="Map preview"></iframe>
+        </div>
       </section>
 
-      <!-- Database info -->
+      <!-- Opening Time -->
       <section class="rounded-lg border bg-card p-5 shadow-sm">
-        <h2 class="mb-3 text-sm font-semibold">Database Status</h2>
-        <div v-if="settings" class="text-xs text-muted-foreground space-y-1">
-          <p>Last updated: <span class="font-mono text-foreground">{{ new Date(settings.updated_at).toLocaleString()
-              }}</span></p>
-        </div>
-        <div v-else class="text-xs text-muted-foreground">
-          Using default configuration (database not seeded yet).
+        <h2 class="mb-3 text-sm font-semibold">Opening Time</h2>
+        <p class="mb-4 text-xs text-muted-foreground">
+          Set weekly opening hours. Toggle "Closed" for off days.
+        </p>
+        <div class="space-y-2">
+          <div v-for="(d, idx) in openingDays" :key="d.day"
+            class="flex items-center gap-3 rounded-md border border-border bg-background px-3 py-2">
+            <span class="w-24 text-sm font-medium shrink-0">{{ d.day }}</span>
+            <Input v-model="d.hours" :disabled="d.close" class="h-9 text-sm flex-1"
+              placeholder="e.g. 10:00AM - 07:00PM" />
+            <button type="button" @click="toggleDayClose(idx)" :class="cn(
+              'shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+              d.close
+                ? 'bg-destructive text-destructive-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            )">
+              {{ d.close ? 'Closed' : 'Open' }}
+            </button>
+          </div>
         </div>
       </section>
 

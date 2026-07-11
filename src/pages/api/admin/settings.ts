@@ -2,9 +2,8 @@
 // PUT  /api/admin/settings  → update settings (requires auth)
 export const prerender = false;
 
-import { Settings } from '../../../lib/db';
+import { Settings } from '../../../lib/db/index';
 import { verifySession, readSessionCookie } from '../../../lib/auth';
-import { getPool } from '../../../lib/db';
 
 export async function GET({ request }: { request: Request }) {
   const cookie = readSessionCookie(request);
@@ -16,6 +15,8 @@ export async function GET({ request }: { request: Request }) {
     id: 1,
     default_language: 'en',
     active_languages: ['en', 'id', 'cn'],
+    google_maps_iframe: '',
+    opening_time: [],
     updated_at: new Date().toISOString(),
   }), { status: 200 });
 }
@@ -27,9 +28,8 @@ export async function PUT({ request }: { request: Request }) {
 
   try {
     const body = await request.json();
-    const { default_language, active_languages } = body;
+    const { default_language, active_languages, google_maps_iframe, opening_time } = body;
 
-    // Validation
     const validLangs = ['en', 'id', 'cn'];
     if (default_language && !validLangs.includes(default_language)) {
       return new Response(JSON.stringify({ error: 'Invalid default language' }), { status: 400 });
@@ -48,20 +48,12 @@ export async function PUT({ request }: { request: Request }) {
       }
     }
 
-    const pool = getPool();
-    if (!pool) return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503 });
-
-    await pool.query(
-      `INSERT INTO coffee_settings (id, default_language, active_languages, updated_at)
-       VALUES (1, $1, $2, now())
-       ON CONFLICT (id) DO UPDATE SET
-         default_language = EXCLUDED.default_language,
-         active_languages = EXCLUDED.active_languages,
-         updated_at = now()`,
-      [default_language ?? 'en', active_languages ?? ['en', 'id', 'cn']]
-    );
-
-    const updated = await Settings.get();
+    const updated = await Settings.upsert({
+      default_language,
+      active_languages,
+      google_maps_iframe: typeof google_maps_iframe === 'string' ? google_maps_iframe : undefined,
+      opening_time: Array.isArray(opening_time) ? opening_time : undefined,
+    });
     return new Response(JSON.stringify({ ok: true, settings: updated }), { status: 200 });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500 });
