@@ -1,6 +1,7 @@
-// Auth — HMAC-signed session cookies with Drizzle ORM.
+// Auth — HMAC-signed session cookies with Drizzle ORM (Cloudflare D1).
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
+import { env as cloudflareEnv } from 'cloudflare:workers';
 import { Users, Sessions } from './db';
 import type { CoffeeUser } from './db';
 
@@ -11,8 +12,13 @@ function sha256Hex(input: string): string {
   return crypto.createHash('sha256').update(input).digest('hex');
 }
 
+// Di Cloudflare Workers secret dibaca dari binding env (wrangler secret put
+// SESSION_SECRET, atau .dev.vars saat development).
 const SESSION_SECRET =
-  import.meta.env.SESSION_SECRET ?? process.env.SESSION_SECRET ?? '';
+  (cloudflareEnv as { SESSION_SECRET?: string }).SESSION_SECRET ??
+  import.meta.env.SESSION_SECRET ??
+  process.env.SESSION_SECRET ??
+  '';
 if (!SESSION_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('SESSION_SECRET env var is required in production');
 }

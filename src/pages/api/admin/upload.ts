@@ -1,18 +1,25 @@
-// /api/admin/upload — Image upload with WebP conversion.
-// Accepts multipart/form-data, converts to WebP via sharp,
-// saves to public/uploads/blog/, returns the public path.
+// /api/admin/upload — Image upload to Cloudflare R2.
+// Accepts multipart/form-data, stores the original bytes in the R2 bucket
+// bound as UPLOADS, returns the public path served by
+// src/pages/uploads/blog/[...key].ts.
 //
 //   POST   /api/admin/upload   → multipart with "file" field
 //   Response: { ok: true, path: "/uploads/blog/abc123.webp" }
 
 import type { APIRoute } from 'astro';
 import { verifySession, readSessionCookie } from '../../../lib/auth';
-import sharp from 'sharp';
-import { randomUUID } from 'crypto';
-import { mkdirSync } from 'fs';
-import { join } from 'path';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
+
+const EXT_BY_TYPE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
+  'image/gif': 'gif',
+  'image/svg+xml': 'svg',
+};
 
 // ── Auth guard ────────────────────────────────────────────────────
 async function auth(request: Request) {
@@ -40,7 +47,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Validate file type
   const fileType = (file as any).type || '';
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
+  const allowedTypes = Object.keys(EXT_BY_TYPE);
   if (fileType && !allowedTypes.includes(fileType)) {
     return json({ error: 'Only JPEG, PNG, WebP, AVIF, and GIF images are allowed' }, 400);
   }
@@ -53,23 +60,20 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const buffer = Buffer.from(await (file as any).arrayBuffer());
-    const filename = `${randomUUID()}.webp`;
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'blog');
+    const buffer = await (file as any).arrayBuffer();
+    const ext = EXT_BY_TYPE[fileType] || 'bin';
+    const filename = `${crypto.randomUUID()}.${ext}`;
+    const key = `blog/${filename}`;
 
-    // Ensure directory exists
-    mkdirSync(uploadDir, { recursive: true });
-
-    // Convert to WebP and save
-    await sharp(buffer)
-      .webp({ quality: 85 })
-      .toFile(join(uploadDir, filename));
+    await env.UPLOADS.put(key, buffer, {
+      httpMetadata: { contentType: fileType || 'application/octet-stream' },
+    });
 
     const publicPath = `/uploads/blog/${filename}`;
     return json({ ok: true, path: publicPath }, 200);
   } catch (e: any) {
     console.error('Upload error:', e);
-    return json({ error: 'Failed to process image' }, 500);
+    return json({ error: 'Failed to upload image' }, 500);
   }
 };
 

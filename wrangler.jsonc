@@ -1,0 +1,35 @@
+{
+	// Konfigurasi Cloudflare Workers untuk Bistly Coffee.
+	// Jalankan `npx wrangler types` setelah mengubah file ini untuk
+	// memperbarui tipe TypeScript (worker-configuration.d.ts).
+	"name": "bistly-coffee",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2025-09-23",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	// Database Cloudflare D1 (pengganti Supabase Postgres).
+	// Buat dengan: npx wrangler d1 create bistly-coffee
+	// lalu salin database_id di bawah.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "bistly-coffee",
+			"database_id": "GANTI_DENGAN_DATABASE_ID_DARI_WRANGLER",
+			"migrations_dir": "db/drizzle"
+		}
+	],
+	// Bucket R2 untuk menyimpan gambar yang di-upload dari /admin.
+	// Buat dengan: npx wrangler r2 bucket create bistly-uploads
+	"r2_buckets": [
+		{
+			"binding": "UPLOADS",
+			"bucket_name": "bistly-uploads"
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}

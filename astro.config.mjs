@@ -1,16 +1,24 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig, sessionDrivers } from 'astro/config';
 import vue       from '@astrojs/vue';
 import tailwind  from '@astrojs/tailwind';
-import node      from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 import fs        from 'node:fs';
 
 // Hybrid mode: marketing pages stay SSG (no `export const prerender = false`
 // on them), while /admin/* and /api/admin/* fall through to SSR so they can
-// query Postgres and sign HttpOnly session cookies. Static pages continue
-// to be pre-rendered at build time and served as fast .html files.
+// query Cloudflare D1 and sign HttpOnly session cookies. Static pages
+// continue to be pre-rendered at build time and served as fast .html files.
 export default defineConfig({
   output: 'static',
-  adapter: node({ mode: 'standalone' }),
+  adapter: cloudflare({
+    // Gambar tidak dioptimasi di runtime (tidak ada <Image> Astro),
+    // cukup disajikan apa adanya dari /uploads atau public/.
+    imageService: 'passthrough',
+  }),
+
+  // Auth memakai cookie HMAC sendiri (src/lib/auth.ts), bukan Astro sessions,
+  // jadi pakai driver in-memory agar adapter tidak meng-provision KV SESSION.
+  session: { driver: sessionDrivers.lruCache() },
 
   integrations: [
     vue({

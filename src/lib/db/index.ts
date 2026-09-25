@@ -1,30 +1,25 @@
 // Drizzle ORM — typed database access for the Brew Haven app.
 // All helpers keep their existing public signatures — only the
-// internals changed from raw SQL (pg) to Drizzle's type-safe API.
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+// internals changed from Supabase Postgres to Cloudflare D1 (SQLite).
+import { drizzle } from 'drizzle-orm/d1';
+import type { DrizzleD1Database } from 'drizzle-orm/d1';
+import { env } from 'cloudflare:workers';
 import { eq, desc, asc, sql } from 'drizzle-orm';
 import * as schema from './schema';
 
-// ── Connection (lazy singleton) ──────────────────────────────────
-let _db: ReturnType<typeof drizzle> | null = null;
-let _sql: ReturnType<typeof postgres> | null = null;
+// ── Connection (lazy singleton, memakai binding D1 "DB") ─────────
+let _db: DrizzleD1Database<typeof schema> | null = null;
 
 export function getDb() {
   if (_db) return _db;
-  const url = import.meta.env.SUPABASE_DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL;
-  if (!url || url.includes('YOUR_PASSWORD')) {
-    _sql = postgres(url || 'postgres://localhost:5432/void', { max: 0 });
-    _db = drizzle(_sql, { schema });
-    return _db;
+  const binding = (env as unknown as { DB?: D1Database }).DB;
+  if (!binding) {
+    throw new Error(
+      'Binding D1 "DB" tidak ditemukan. Pastikan wrangler.jsonc sudah ' +
+      'mendefinisikan d1_databases dan jalankan lewat astro dev / astro build.',
+    );
   }
-  _sql = postgres(url, {
-    ssl: 'require',
-    max: 10,
-    idle_timeout: 30,
-    connect_timeout: 8,
-  });
-  _db = drizzle(_sql, { schema });
+  _db = drizzle(binding, { schema });
   return _db;
 }
 
@@ -139,10 +134,10 @@ export const Settings = {
       .onConflictDoUpdate({
         target: schema.coffee_settings.id,
         set: {
-          default_language: sql`EXCLUDED.default_language`,
-          active_languages: sql`EXCLUDED.active_languages`,
-          google_maps_iframe: sql`EXCLUDED.google_maps_iframe`,
-          opening_time: sql`EXCLUDED.opening_time`,
+          default_language: sql`excluded.default_language`,
+          active_languages: sql`excluded.active_languages`,
+          google_maps_iframe: sql`excluded.google_maps_iframe`,
+          opening_time: sql`excluded.opening_time`,
           updated_at: new Date(),
         },
       })
