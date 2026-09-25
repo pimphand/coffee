@@ -17,7 +17,7 @@
 		{
 			"binding": "DB",
 			"database_name": "bistly-coffee",
-			"database_id": "GANTI_DENGAN_DATABASE_ID_DARI_WRANGLER",
+			"database_id": "e884f1eb-c72c-40cf-a3e4-782d1288c864",
 			"migrations_dir": "db/drizzle"
 		}
 	],
