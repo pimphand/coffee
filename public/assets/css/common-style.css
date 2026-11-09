@@ -14,7 +14,6 @@ Version: 1.0
     # Components
         # Base CSS
         # Common CSS
-        # Preloader CSS
         # Offcanvas CSS
         # Animation CSS
         # Button CSS
@@ -487,118 +486,6 @@ label {
   background-color: var(--primary-black-color);
 }
 
-/* Preloader CSS */
-.preloader {
-  bottom: 0;
-  height: 100vh;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 100vw;
-  z-index: 99999;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  background-color: var(--white-color);
-}
-.preloader .loader {
-  position: relative;
-  overflow: hidden;
-}
-
-.loader {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-  border: 3px solid;
-  border-color: var(--primary-black-color) var(--primary-black-color) transparent transparent;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-animation: rotation 1s linear infinite;
-          animation: rotation 1s linear infinite;
-}
-
-.loader::after,
-.loader::before {
-  content: "";
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  border: 3px solid;
-  border-color: transparent transparent var(--primary-color) var(--primary-color);
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  box-sizing: border-box;
-  -webkit-animation: rotationBack 0.5s linear infinite;
-          animation: rotationBack 0.5s linear infinite;
-  -webkit-transform-origin: center center;
-          transform-origin: center center;
-}
-
-.loader::before {
-  width: 50px;
-  height: 50px;
-  border-color: var(--secondary-color) var(--primary-black-color) transparent transparent;
-  -webkit-animation: rotation 1.5s linear infinite;
-          animation: rotation 1.5s linear infinite;
-}
-
-@-webkit-keyframes rotation {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-  }
-}
-
-@keyframes rotation {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes rotationBack {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
-}
-@keyframes rotationBack {
-  0% {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(-360deg);
-            transform: rotate(-360deg);
-  }
-}
 /* Offcanvas Overlay */
 .offcanvas__overlay {
   position: fixed;

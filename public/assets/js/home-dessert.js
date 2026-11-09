@@ -16,7 +16,6 @@ Version: 1.0
     # Components
         # Base CSS
         # Common CSS
-        # Preloader CSS
         # Offcanvas CSS
         # Animation CSS
         # Button CSS

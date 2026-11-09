@@ -14,7 +14,6 @@ Version: 1.0
 
 	# Main Menu
 	# Offcanvas Overlay
-	# Preloader
 	# Sticky
 	# Magnific-Popup JS
 	# Counter JS
@@ -77,12 +76,6 @@ Version: 1.0
 			if ($(window).width() > 991) $overlay.removeClass("overlay-open");
 		});
 	}
-
-	//===== Preloader
-
-	$(window).on('load', function(event) {
-		$('.preloader').delay(500).fadeOut(500);
-	})
 
 	//===== Sticky
 
